@@ -16,7 +16,6 @@ e1071CVToMlrCV = function(e1071.tune.result) {
   return (cv.instance)
 }
 
-
 e1071BootstrapToMlrBootstrap = function(e1071.tune.result) {
   tr = e1071.tune.result
   inds = tr$train.ind
@@ -33,7 +32,6 @@ e1071BootstrapToMlrBootstrap = function(e1071.tune.result) {
   }
   return (bs.instance)
 }
-
 
 testSimple = function(t.name, df, target, train.inds, old.predicts, parset = list()) {
   inds = train.inds
@@ -169,8 +167,6 @@ testCVParsets = function(t.name, df, target, folds = 2, tune.train, tune.predict
     testCV(t.name, df, target, folds, parset, tune.train, tune.predict)
   }
 }
-
-
 
 testBootstrap = function(t.name, df, target, iters = 3, parset = list(), tune.train, tune.predict = predict) {
   data = df

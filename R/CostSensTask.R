@@ -1,58 +1,47 @@
+#' @param costs [\code{data.frame}]\cr
+#'   A numeric matrix or data frame containing the costs of misclassification.
+#'   We assume the general case of observation specific costs.
+#'   This means we have n rows, corresponding to the observations, in the same order as \code{data}.
+#'   The columns correspond to classes and their names are the class labels
+#'   (if unnamed we use y1 to yk as labels).
+#'   Each entry (i,j) of the matrix specifies the cost of predicting class j
+#'   for observation i.
 #' @export
 #' @rdname Task
 #' @family costsens
-makeCostSensTask = function(id, data, costs, blocking = NULL, fixup.data = "warn", check.data = TRUE) {
-  assertChoice(fixup.data, choices = c("no", "quiet", "warn"))
-  assertFlag(check.data)
+makeCostSensTask = function(id = deparse(substitute(data)), data, costs, blocking = NULL) {
+  task = makeTask(id, data, weights = NULL, blocking = blocking)
+  assert(checkMatrix(costs, any.missing = FALSE), checkDataFrame(costs, any.missing = FALSE))
 
-  # we don't have a target nor weights
-  target = character(0L)
-  weights = NULL
-  task = addClasses(makeSupervisedTask("costsens", data, target, weights, blocking), "CostSensTask")
-  task$env$costs = costs
+  if (is.data.frame(costs))
+    costs = as.matrix(costs)
+  assertNumeric(costs, lower = 0)
+  if (is.null(colnames(costs)))
+    colnames(costs) = paste0("y", seq_col(costs))
 
-  if (fixup.data != "no")
-    fixupData(task, target, fixup.data)
-  if (check.data)
-    checkTaskCreation(task, target)
-
-  id = checkOrGuessId(id, data)
-  task$task.desc = makeTaskDesc.CostSensTask(task, id, target)
-  return(task)
-}
-
-checkTaskCreation.CostSensTask = function(task, target, ...) {
-  NextMethod("checkTaskCreation")
-  assert(checkMatrix(task$env$costs, any.missing = FALSE), checkDataFrame(task$env$costs, any.missing = FALSE))
-  if (is.data.frame(task$env$costs))
-    task$env$costs = as.matrix(task$env$costs)
-  assertNumeric(task$env$costs, lower = 0)
-  if (is.null(colnames(task$env$costs)))
-    colnames(task$env$costs) = paste("y", seq_col(task$env$costs), sep = "")
-  checkColumnNames(task$env$costs)
-
-  if (nrow(task$env$costs) != nrow(task$env$data))
-    stopf("Number of rows in cost matrix (%s) should equal the number of observations (%s).",
-      nrow(task$env$costs), nrow(task$env$data))
+  if (nrow(costs) != nrow(data))
+    stopf("Number of rows in cost matrix (%i) should equal the number of observations (%i).",
+      nrow(task$costs), nrow(task$data))
   # we use ..y.. later in the models as a name for temp labels
-  if ("..y.." %in% c(colnames(task$env$data), colnames(task$env$costs)))
+  if ("..y.." %in% c(colnames(data), colnames(costs)))
     stopf("The name '..y..' is currently reserved for costsens tasks. You can use it neither for features nor labels!")
+
+  task$type = "costsens"
+  task$costs = costs
+  task$class.levels = colnames(costs)
+  addClasses(task, "CostSensTask")
 }
 
-fixupData.CostSensTask = function(task, target, choice, ...) {
-  # FIXME: move fixes from checkTaskCreation here?
-  NextMethod("fixupData")
-}
-
-makeTaskDesc.CostSensTask = function(task, id, target) {
-  td = makeTaskDescInternal(task, "costsens", id, target)
-  td$class.levels = colnames(task$env$costs)
-  return(addClasses(td, "TaskDescCostSens"))
+#' @export
+getTaskDesc.CostSensTask = function(task) {
+  td = NextMethod("getTaskDesc")
+  insert(td, list(class.levels = task$class.levels))
 }
 
 #' @export
 print.CostSensTask = function(x, ...) {
-  print.SupervisedTask(x, print.target = FALSE, print.weights = FALSE)
-  levs = x$task.desc$class.levels
-  catf("Classes: %i\n%s", length(levs), clipString(collapse(levs, sep = ", "), 30L))
+  catf("CostSensTask %s", x$id)
+  catf("Target: %s", collapse(x$target))
+  catf("Censoring: %s", x$censoring)
+  NextMethod("print")
 }

@@ -35,11 +35,11 @@
 #' @references
 #' Chawla, N., Bowyer, K., Hall, L., & Kegelmeyer, P. (2000)
 #' \emph{SMOTE: Synthetic Minority Over-sampling TEchnique.}
-#' In International Conference of Knowledge Based Computer Systems, pp. 46-57. 
+#' In International Conference of Knowledge Based Computer Systems, pp. 46-57.
 #' National Center for Software Technology, Mumbai, India, Allied Press.
 #' @family imbalancy
 #' @export
-#' @useDynLib mlr c_smote 
+#' @useDynLib mlr c_smote
 smote = function(task, rate, nn = 5L, standardize = TRUE, alt.logic = FALSE) {
   checkTask(task, binary = TRUE)
   assertNumber(rate, lower = 1)
@@ -52,7 +52,7 @@ smote = function(task, rate, nn = 5L, standardize = TRUE, alt.logic = FALSE) {
 
   # shortcuts
   data = getTaskData(task)
-  target = task$task.desc$target
+  target = getTargetNames(task)
   y = data[, target]
   x = dropNamed(data, target)
   z = getMinMaxClass(y)

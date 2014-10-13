@@ -5,75 +5,100 @@
 #'  the \dQuote{interval2} format.
 #'  See \code{\link[survival]{Surv}} for details.
 #' @export
-makeSurvTask = function(id, data, target, censoring = "rcens", weights = NULL, blocking = NULL,
-  fixup.data = "warn", check.data = TRUE) {
+makeSurvTask = function(id = deparse(substitute(data)), data, target, censoring = "rcens", weights = NULL, blocking = NULL) {
+  task = makeSupervisedTask(id, data, target, weights, blocking)
   assertChoice(censoring, choices = c("rcens", "lcens", "icens"))
-  assertChoice(fixup.data, choices = c("no", "quiet", "warn"))
-  assertFlag(check.data)
 
-  task = addClasses(makeSupervisedTask("surv", data, target, weights, blocking), "SurvTask")
-
-  if (fixup.data != "no")
-    fixupData(task, target, fixup.data, censoring = censoring)
-  if (check.data)
-    checkTaskCreation(task, target, censoring = censoring)
-  id = checkOrGuessId(id, data)
-  task$task.desc = makeTaskDesc.SurvTask(task, id, target, censoring)
-  return(task)
-}
-
-checkTaskCreation.SurvTask = function(task, target, ..., censoring) {
-  NextMethod("checkTaskCreation")
-  assertCharacter(target, len = 2L, any.missing = FALSE)
-  if (censoring %in% c("lcens", "rcens")) {
-    time = task$env$data[[target[1L]]]
-    event = task$env$data[[target[2L]]]
-    assertNumeric(time, lower = 0, finite = TRUE, any.missing = FALSE, .var.name = "target column time")
-    assertLogical(event, any.missing = FALSE, .var.name = "target column event")
-  } else { # icens
-    time1 = task$env$data[[target[1L]]]
-    time2 = task$env$data[[target[2L]]]
+  time1 = data[[target[1L]]]
+  time2 = data[[target[2L]]]
+  if (censoring == "icens") {
     assertNumeric(time1, any.missing = TRUE, finite = FALSE, .var.name = "target column time1")
     assertNumeric(time2, any.missing = TRUE, finite = FALSE, .var.name = "target column time2")
-  }
-}
+    if (is.integer(time1))
+      task$data[[target[1L]]] = as.double(time1)
+    if (is.integer(time2))
+      task$data[[target[2L]]] = as.double(time2)
+  } else {
+    assertNumeric(time1, lower = 0, finite = TRUE, any.missing = FALSE, .var.name = "target column time")
+    assertAtomicVector(time2, any.missing = FALSE, .var.name = "target column event")
+    if (is.integer(time1))
+      task$data[[target[1L]]] = as.double(time1)
 
-fixupData.SurvTask = function(task, target, choice, ..., censoring) {
-  NextMethod("fixupData")
-  if (censoring %in% c("lcens", "rcens")) {
-    time = task$env$data[[target[1L]]]
-    event = task$env$data[[target[2L]]]
-
-    if (is.integer(time)) {
-      task$env$data[[target[1L]]] = as.double(time)
-    }
-
-    if (is.numeric(event)) {
-      if (testIntegerish(event) && all(as.integer(event) %in% c(0L, 1L)))
-        task$env$data[[target[2L]]] = (as.integer(event) == 1L)
-    } else if (is.factor(event)) {
-      lvls = levels(event)
+    ok = FALSE
+    if (is.logical(time2)) {
+      ok = TRUE
+    } else if (is.numeric(time2)) {
+      if (testIntegerish(time2) && all(as.integer(time2) %in% c(0L, 1L))) {
+        task$env$data[[target[2L]]] = (as.integer(time2) == 1L)
+        ok = TRUE
+      }
+    } else if (is.factor(time2)) {
+      lvls = levels(time2)
       if (length(lvls) == 2L) {
-        if (all(lvls %in% c("TRUE", "FALSE"))) {
-          task$env$data[[target[2L]]] = (event == "TRUE")
+        if (all(lvls %in% c("FALSE", "TRUE"))) {
+          task$env$data[[target[2L]]] = (time2 == "TRUE")
+          ok = TRUE
         } else if (all(lvls %in% c("0", "1"))) {
-          task$env$data[[target[2L]]] = (as.character(event) == "1")
+          task$env$data[[target[2L]]] = (time2 == "1")
+          ok = TRUE
         }
       }
     }
-  } else { # icens
-    time1 = task$env$data[[target[1L]]]
-    time2 = task$env$data[[target[2L]]]
-
-    if (is.integer(time1))
-      task$env$data[[target[1L]]] = as.numeric(time1)
-    if (is.integer(time2))
-      task$env$data[[target[2L]]] = as.numeric(time2)
+    if (!ok)
+      stop("Event column must be binary (logical, integer {0,1} or factor {FALSE,TRUE}/{0/1}")
   }
+  task$type = "surv"
+  task$censoring = censoring
+  addClasses(task, "SurvTask")
 }
 
-makeTaskDesc.SurvTask = function(task, id, target, censoring) {
-  td = makeTaskDescInternal(task, "surv", id, target)
-  td$censoring = censoring
-  addClasses(td, "TaskDescSurv")
+getTaskDesc.SurvTask = function(task) {
+  td = NextMethod("getTaskDesc")
+  insert(td, censoring = task$censoring)
+}
+
+#' @export
+print.SurvTask = function(x, ...) {
+  catf("SurvTask %s", x$id)
+  catf("Target: %s", collapse(x$target))
+  catf("Censoring: %s", x$censoring)
+  NextMethod("print")
+}
+
+#' @export
+recodeTarget.SurvTask = function(task, subset, recode = "no") {
+  assertChoice(recode, c("lcens", "rcens", "icens"))
+
+  y = getTarget(task)[subset,, drop = FALSE]
+  from = task$censoring
+  lookup = setNames(c("left", "right", "interval2"), c("lcens", "rcens", "icens"))
+
+  if (from == recode)
+    return(Surv(y[, 1L], y[, 2L], type = lookup[recode]))
+
+  if (setequal(c(from, recode), c("lcens", "rcens")))
+    stop("Converting left censored to right censored data (or vice versa) is not possible")
+
+  if (from == "rcens") {
+    time1 = y[, 1L]
+    time2 = ifelse(y[, 2L], y[, 1L], Inf)
+  } else if (from == "lcens") {
+    time1 = ifelse(y[, 2L], y[, 1L], -Inf)
+    time2 = y[, 1L]
+  } else {
+    if (recode == "lcens") {
+      is.neg.infinite = function(x) is.infinite(x) & x < 0
+      if (!all(is.neg.infinite(y[, 1L] | y[, 1L] == y[, 2L])))
+        stop("Could not convert interval2 survival data to left censored data")
+      time1 = y[, 2L]
+      time2 = is.infinite(y[, 1L])
+    } else {
+      is.pos.infinite = function(x) is.infinite(x) & x > 0
+      if (!all(is.pos.infinite(y[, 2L] | y[, 2L] == y[, 1L])))
+        stop("Could not convert interval2 survival data to right censored data")
+      time1 = y[, 1L]
+      time2 = is.infinite(y[, 2L])
+    }
+  }
+  Surv(time1, time2, type = lookup[recode])
 }

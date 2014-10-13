@@ -1,41 +1,15 @@
-
-makeSupervisedTask = function(type, data, target, weights = NULL, blocking = NULL) {
-  env = new.env(parent = emptyenv())
-  assertDataFrame(data)
-  env$data = data
-  makeS3Obj(c("SupervisedTask", "Task"),
-    env = env,
-    weights = weights,
-    blocking = blocking,
-    task.desc = NA
-  )
-}
-
-#FIXME: it would probably be better to have: pre-check, fixup, post-check!
-
-checkTaskCreation.SupervisedTask = function(task, target, ...) {
-  w = which.first(target %nin% colnames(task$env$data))
-  if (length(w) > 0L)
-    stopf("Column names of data doesn't contain target var: %s", target[w])
-  NextMethod("checkTaskCreation")
-}
-
-fixupData.SupervisedTask = function(task, target, choice, ...) {
-  NextMethod("fixupData")
-}
-
-#' @export
-print.SupervisedTask = function(x, print.target = TRUE, print.weights = TRUE, ...) {
-  td = x$task.desc
-  catf("Supervised task: %s", td$id)
-  catf("Type: %s", td$type)
-  if (print.target)
-    catf("Target: %s", collapse(td$target))
-  catf("Observations: %i", td$size)
-  catf("Features:")
-  catf(printToChar(td$n.feat, collapse = "\n"))
-  catf("Missings: %s", td$has.missings)
-  if (print.weights)
-    catf("Has weights: %s", td$has.weights)
-  catf("Has blocking: %s", td$has.blocking)
+#' @param target [\code{character}]\cr
+#'  Name of the target column(s) in \code{data}.
+#' @rdname Task
+makeSupervisedTask = function(id = deparse(substitute(data)), data, target, weights = NULL, blocking = NULL) {
+  assertCharacter(target, min.len = 1L, any.missing = FALSE)
+  if (!all(target %in% names(data)))
+    stop("All target columns must be in 'data'")
+  i = which.first(vlapply(data[target], anyMissing))
+  if (length(i) > 0L)
+    stopf("Target column '%s' contains missing values", target[i])
+  checkTaskCreation(dropNamed(data, target), c("inf", "nan", "empty.levels"))
+  task = makeTask(id = id, data = data, weights = weights, blocking = blocking)
+  task$target = target
+  addClasses(task, "SupervisedTask")
 }

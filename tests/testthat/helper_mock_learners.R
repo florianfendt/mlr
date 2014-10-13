@@ -45,4 +45,3 @@ predictLearner.classif.mock3 = function(.learner, .model, .newdata, ...) 1L
 registerS3method("makeRLearner", "classif.mock3", makeRLearner.classif.mock3)
 registerS3method("trainLearner", "classif.mock3", trainLearner.classif.mock3)
 registerS3method("predictLearner", "classif.mock3", predictLearner.classif.mock3)
-

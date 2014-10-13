@@ -1,65 +1,46 @@
 #' @export
 #' @rdname Task
-makeClassifTask = function(id, data, target, weights = NULL, blocking = NULL,
-  positive = NA_character_, fixup.data = "warn", check.data = TRUE) {
-  assertChoice(fixup.data, choices = c("no", "quiet", "warn"))
-  assertFlag(check.data)
+makeClassifTask = function(id = deparse(substitute(data)), data, target,
+  weights = NULL, blocking = NULL, positive = NA_character_) {
+  task = makeSupervisedTask(id, data, target, weights, blocking)
+  assertString(positive, na.ok = TRUE)
 
-  task = addClasses(makeSupervisedTask("classif", data, target, weights, blocking), "ClassifTask")
-  if (fixup.data != "no")
-    fixupData(task, target, fixup.data)
-  if (check.data)
-    checkTaskCreation(task, target)
-  # we expect the target to be a factor from here on
-  levs = levels(task$env$data[[target]])
-  m = length(levs)
-  id = checkOrGuessId(id, data)
-  task$task.desc = makeTaskDesc.ClassifTask(task, id, target, positive)
-  return(task)
-}
-
-checkTaskCreation.ClassifTask = function(task, target, ...) {
-  NextMethod("checkTaskCreation")
-  assertString(target)
-  assertFactor(task$env$data[[target]], any.missing = FALSE, empty.levels.ok = FALSE, .var.name = target)
-}
-
-fixupData.ClassifTask = function(task, target, choice, ...) {
-  NextMethod("fixupData")
-  x = task$env$data[[target]]
-  if (is.character(x) || is.logical(x) || is.integer(x))
-    task$env$data[[target]] = as.factor(x)
-}
-
-makeTaskDesc.ClassifTask = function(task, id, target, positive) {
-  levs = levels(task$env$data[[target]])
-  m = length(levs)
-  if (is.na(positive)) {
-    if (m <= 2L)
-      positive = levs[1L]
-  } else {
-    if (m > 2L)
-      stop("Cannot set a positive class for a multiclass problem!")
+  if (length(target) != 1L)
+    stop("There must be exactly one target column for classification")
+  task[[target]] = as.factor(data[[target]])
+  assertFactor(task[[target]], empty.levels.ok = FALSE, .var.name = target)
+  levs = levels(task[[target]])
+  if (!is.na(positive)) {
     assertChoice(positive, choices = levs)
+    if (length(levs) > 2L)
+      stop("Cannot set a positive class for a multiclass problem!")
   }
-  td = makeTaskDescInternal(task, "classif", id, target)
-  td$class.levels = levs
-  td$positive = positive
-  td$negative = NA_character_
-  if (length(td$class.levels) == 1L)
-    td$negative = paste0("not_", positive)
-  else if(length(td$class.levels) == 2L)
-    td$negative = setdiff(td$class.levels, positive)
-  return(addClasses(td, "TaskDescClassif"))
+
+  task$type = "clasif"
+  task$class.levels = levs
+  task$positive = positive
+  addClasses(task, "ClassifTask")
+}
+
+#' @export
+getTaskDesc.ClassifTask = function(task) {
+  td = NextMethod("getTaskDesc")
+  insert(td, list(class.levels = task$class.levels, positive = task$positive))
 }
 
 #' @export
 print.ClassifTask = function(x, ...) {
-  # remove 1st newline
-  di = printToChar(table(getTaskTargets(x)), collapse = NULL)[-1L]
-  m = length(x$task.desc$class.levels)
-  print.SupervisedTask(x)
-  catf("Classes: %i", m)
-  catf(collapse(di, "\n"))
-  catf("Positive class: %s", x$task.desc$positive)
+  catf("ClassifTask %s", x$id)
+  catf("Target: %s", collapse(x$target))
+  catf("Positive class: %s", x$positive)
+  NextMethod("print")
+}
+
+#' @export
+recodeTarget.ClassifTask = function(task, subset, recode = "no") {
+  assertChoice(recode, c("01", "-1+1"))
+  y = task$data[subset, task$target, drop = TRUE]
+  if (type == "01")
+    return(as.numeric(y == task$positive))
+  return(as.numeric(2L * (y == task$positive) - 1L))
 }

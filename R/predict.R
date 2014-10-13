@@ -52,7 +52,7 @@ predict.WrappedModel = function(object, task, newdata, subset, ...) {
   # FIXME: cleanup if cases
   if (missing(newdata)) {
     assertClass(task, classes = "Task")
-    size = task$task.desc$size
+    size = getTaskRows(task)
   } else {
     assertDataFrame(newdata, min.rows = 1L)
     size = nrow(newdata)

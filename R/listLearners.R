@@ -94,7 +94,7 @@ listLearners.Task = function(obj, properties = character(0L),
 
   task = obj
   assertCharacter(properties, any.missing = FALSE)
-  td = task$task.desc
+  td = getTaskDesc(task)
 
   props = character(0L)
   if (td$n.feat["numerics"] > 0L) props = c(props, "numerics")

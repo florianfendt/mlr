@@ -120,8 +120,7 @@ makeStackedLearner = function(base.learners, super.learner = NULL, predict.type 
 #' @details None.
 #'
 #' @export
-#'
-getStackedBaseLearnerPredictions = function(model, newdata = NULL) {
+getBaseLearnerPredictions = function(model, newdata = NULL) {
   # get base learner and predict type
   bms = model$learner.model$base.models
   method = model$learner.model$method
@@ -149,7 +148,7 @@ trainLearner.StackedLearner = function(.learner, .task, .subset, ...) {
   # reduce to subset we want to train ensemble on
   .task = subsetTask(.task, subset = .subset)
   # init prob result matrix, where base learners store predictions
-  probs = makeDataFrame(.task$task.desc$size, ncol = length(bls), col.types = "numeric",
+  probs = makeDataFrame(getTaskRows(.task), ncol = length(bls), col.types = "numeric",
     col.names = ids)
   switch(.learner$method,
     average = averageBaseLearners(.learner, .task),
@@ -257,14 +256,15 @@ averageBaseLearners = function(learner, task) {
     probs[[i]] = getResponse(pred, full.matrix = TRUE)
   }
   names(probs) = names(bls)
-  list(method = "average", base.models = base.models, super.model = NULL,
+  list(method="average", base.models = base.models, super.model = NULL,
        pred.train = probs)
 }
 
 # stacking where we predict the training set in-sample, then super-learn on that
 stackNoCV = function(learner, task) {
-  type = ifelse(task$task.desc$type == "regr", "regr",
-    ifelse(length(task$task.desc$class.levels) == 2L, "classif", "multiclassif"))
+  type = getTaskType(task)
+  if (type == "classif" && task$class.levels > 2L)
+    type = "multiclassif"
   bls = learner$base.learners
   use.feat = learner$use.feat
   base.models = probs = vector("list", length(bls))
@@ -286,16 +286,16 @@ stackNoCV = function(learner, task) {
   }
 
   # now fit the super learner for predicted_probs --> target
-  probs[[task$task.desc$target]] = getTaskTargets(task)
+  tn = getTargetNames(task)
+  probs[[tn]] = getTaskTargets(task)
   if (use.feat) {
     # add data with normal features
     feat = getTaskData(task)
-    feat = feat[, !colnames(feat)%in%task$task.desc$target, drop = FALSE]
+    feat = feat[, !colnames(feat) %in% tn, drop = FALSE]
     probs = cbind(probs, feat)
-    super.task = makeSuperLearnerTask(learner, data = probs,
-      target = task$task.desc$target)
+    super.task = makeSuperLearnerTask(learner, data = probs, target = tn)
   } else {
-    super.task = makeSuperLearnerTask(learner, data = probs, target = task$task.desc$target)
+    super.task = makeSuperLearnerTask(learner, data = probs, target = tn)
   }
   super.model = train(learner$super.learner, super.task)
   list(method = "stack.no.cv", base.models = base.models,
@@ -304,8 +304,9 @@ stackNoCV = function(learner, task) {
 
 # stacking where we crossval the training set with the base learners, then super-learn on that
 stackCV = function(learner, task) {
-  type = ifelse(task$task.desc$type == "regr", "regr",
-    ifelse(length(task$task.desc$class.levels) == 2L, "classif", "multiclassif"))
+  type = getTaskType(task)
+  if (type == "classif" && task$class.levels > 2L)
+    type = "multiclassif"
   bls = learner$base.learners
   use.feat = learner$use.feat
   # cross-validate all base learners and get a prob vector for the whole dataset for each learner
@@ -327,7 +328,7 @@ stackCV = function(learner, task) {
   }
 
   # add true target column IN CORRECT ORDER
-  tn = task$task.desc$target
+  tn = getTargetNames(task)
   test.inds = unlist(rin$test.inds)
 
   pred.train = as.list(probs[order(test.inds), , drop = FALSE])
@@ -346,7 +347,7 @@ stackCV = function(learner, task) {
     super.task = makeSuperLearnerTask(learner, data = probs, target = tn)
   }
   super.model = train(learner$super.learner, super.task)
-  list(method = "stack.cv", base.models = base.models,
+  list(method="stack.cv", base.models = base.models,
        super.model = super.model, pred.train = pred.train)
 }
 
@@ -373,11 +374,8 @@ getResponse = function(pred, full.matrix = TRUE) {
 
 # Create a super learner task
 makeSuperLearnerTask = function(learner, data, target) {
-  if (learner$super.learner$type == "classif") {
-    makeClassifTask(data = data, target = target)
-  } else {
-    makeRegrTask(data = data, target = target)
-  }
+  constuctor = getTaskConstructorForLearner(learner)
+  do.call(constructor, list(data = data, target = target))
 }
 
 # TODOs:

@@ -18,18 +18,18 @@
 getFilterValues = function(task, method = "rf.importance", nselect = getTaskNFeats(task), ...) {
   assert(checkClass(task, "ClassifTask"), checkClass(task, "RegrTask"), checkClass(task, "SurvTask"))
   assertChoice(method, choices = ls(.FilterRegister))
-  td = task$task.desc
+  td = getTaskDesc(task)
   filter = .FilterRegister[[method]]
 
   if (!isScalarNA(filter$pkg))
     requirePackages(filter$pkg, why = "getFilterValues")
   if (td$type %nin% filter$supported.tasks)
     stopf("Filter '%s' not compatible with task of type '%s'", filter$name, td$type)
-  unsupported = setdiff(names(td$n.feat[td$n.feat > 0L]), filter$supported.features)
+  unsupported = setdiff(td$feature.types, filter$supported.features)
   if (length(unsupported) > 0L)
     stopf("Filter '%s' does not support features of type '%s'", filter$name, unsupported[1L])
   assertCount(nselect)
-  
+
   res = do.call(filter$fun, c(list(task = task, nselect = nselect), list(...)))
 
   fn = getTaskFeatureNames(task)

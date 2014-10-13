@@ -46,7 +46,7 @@ makeResampleInstance = function(desc, task, size, ...) {
     desc = makeResampleDesc(desc, ...)
   if (!missing(task)) {
     assertClass(task, classes = "Task")
-    size = task$task.desc$size
+    size = getTaskRows(task)
     blocking = task$blocking
   } else {
     task = NULL
@@ -74,13 +74,12 @@ makeResampleInstance = function(desc, task, size, ...) {
     if (is.null(task))
       stop("Stratification always needs the task!")
 
-    grp = switch(task$task.desc$type,
+    y = getTaskTargets(task)
+    grp = switch(getTaskType(task),
       "classif" = {
-        y = getTaskTargets(task)
-        lapply(task$task.desc$class.levels, function(x) which(x == y))
+        lapply(task$class.levels, function(x) which(x == y))
       },
       "surv" = {
-        y = getTaskTargets(task)
         lapply(0:1, function(x) which(x == y[, 2L]))
       },
       stopf("Stratification for tasks of type '%s' not supported", task$task.desc$type)

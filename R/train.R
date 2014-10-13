@@ -34,7 +34,7 @@ train = function(learner, task, subset, weights = NULL) {
   learner = checkLearner(learner)
   assertClass(task, classes = "Task")
   if (missing(subset)) {
-    subset = seq_len(task$task.desc$size)
+    subset = seq_len(getTaskRows(task))
   } else {
     subset = asInteger(subset)
   }
@@ -43,7 +43,7 @@ train = function(learner, task, subset, weights = NULL) {
   requireLearnerPackages(learner)
 
 
-  tn = task$task.desc$target
+  tn = getTargetNames(task)
 
   # make pars list for train call
   pars = list(.learner = learner, .task = task, .subset = subset)
@@ -65,7 +65,7 @@ train = function(learner, task, subset, weights = NULL) {
   # no vars? then use no vars model
 
   if (length(vars) == 0L) {
-    learner.model = makeNoFeaturesModel(targets = task$env$data[subset, tn], task.desc = task$task.desc)
+    learner.model = makeNoFeaturesModel(targets = getTaskTarget(task)[subset], task.desc = getTaskDesc(task))
     time.train = 0
   } else {
     opts = getLearnerOptions(learner, c("show.learner.output", "on.learner.error", "on.learner.warning"))
@@ -89,5 +89,5 @@ train = function(learner, task, subset, weights = NULL) {
     time.train = as.numeric(st[3L])
   }
   factor.levels = getTaskFactorLevels(task)
-  makeWrappedModel(learner, learner.model, task$task.desc, subset, vars, factor.levels, time.train)
+  makeWrappedModel(learner, learner.model, getTaskDesc(task), subset, vars, factor.levels, time.train)
 }

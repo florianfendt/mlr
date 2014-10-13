@@ -51,7 +51,7 @@ doPerformaceIteration = function(measure, pred = NULL, task = NULL, model = NULL
       stopf("You need to pass model for measure %s!", m$id)
     assertClass(model, classes = "WrappedModel")
     model2 = model
-    td = model$task.desc
+    td = getTaskDesc(model)
   } else {
     model2 = NULL
   }
@@ -59,8 +59,8 @@ doPerformaceIteration = function(measure, pred = NULL, task = NULL, model = NULL
     if (is.null(task))
       stopf("You need to pass task for measure %s!", m$id)
     assertClass(task, classes = "Task")
-    task2 = task
-    td = task$desc
+    task2 = copyTask(task)
+    td = getTaskDesc(task)
   } else {
     task2 = NULL
   }
@@ -68,7 +68,8 @@ doPerformaceIteration = function(measure, pred = NULL, task = NULL, model = NULL
     if (is.null(task) && is.null(feats))
       stopf("You need to pass features for measure %s!", m$id)
     else if (is.null(feats))
-      feats = task$env$data[pred$data$id,, drop = FALSE]
+      # FIXME: getTaskFeatures?
+      feats = task$data[pred$data$id,, drop = FALSE]
     else
       assertClass(feats, "data.frame")
   }

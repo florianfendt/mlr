@@ -1,4 +1,6 @@
 library(mlbench)
+basic.task = makeTask(id = "basic.task", data = iris)
+
 data(Sonar, BreastCancer)
 
 binaryclass.df = Sonar

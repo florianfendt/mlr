@@ -102,8 +102,20 @@ getTaskNFeats.Task = function(task) {
 }
 
 #' @export
-getTaskFormula.Task = function(task, target = getTargetNames(task), env = NULL) {
-  as.formula(getTaskFormulaAsString(task, target = target), env = env)
+#' @examples
+#' task = makeClassifTask(data = iris, target = "Species")
+#' subsetTask(task, subset = 1:100)
+subsetTask = function(task, subset, features) {
+  # FIXME: we recompute the taskdesc for each subsetting. do we want that? speed?
+  # FIXME: maybe we want this independent of changeData?
+  task = changeData(task, getTaskData(task, subset, features), getTaskCosts(task, subset))
+  if (!missing(subset)) {
+    if (task$task.desc$has.blocking)
+      task$blocking = task$blocking[subset]
+    if (task$task.desc$has.weights)
+      task$weights = task$weights[subset]
+  }
+  return(task)
 }
 
 #' @export
@@ -111,9 +123,27 @@ getTaskFormulaAsString.Task = function(task, target = getTargetNames(task)) {
   "~ ."
 }
 
-#' @export
-recodeTarget.Task = function(task, subset, type = "no") {
-  stopf("Unknown recode target operation '%s' for task '%s'", type, task$id)
+# we create a new env, so the reference is not changed
+# FIXME: really check what goes on here! where is this called / used?
+changeData = function(task, data, costs, weights) {
+  if (missing(data))
+    data = getTaskData(task)
+  if (missing(costs))
+    costs = getTaskCosts(task)
+  if (missing(weights))
+    weights = task$env$weights
+  task$env = new.env(parent = emptyenv())
+  task$env$data = data
+  task$env$costs = costs
+  task$env$weights = weights
+  td = task$task.desc
+  # FIXME: this is bad style but I see no other way right now
+  task$task.desc = switch(td$type,
+    "classif" = makeTaskDesc(task, td$id, td$target, td$positive),
+    "surv" = makeTaskDesc(task, td$id, td$target, td$censoring),
+    "cluster" = makeTaskDesc(task, td$id),
+    makeTaskDesc(task, td$id, td$target))
+  return(task)
 }
 
 #' @export

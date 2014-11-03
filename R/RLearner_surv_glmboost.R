@@ -26,9 +26,9 @@ trainLearner.surv.glmboost = function(.learner, .task, .subset, .weights = NULL,
   f = getTaskFormula(.task, env = as.environment("package:survival"))
   ctrl = learnerArgsToControl(mboost::boost_control, mstop, nu)
   if (is.null(.weights)) {
-    mboost::glmboost(f, data = getTaskData(.task, .subset), control = ctrl, family = family, ...)
+    mboost::glmboost(f, data = .task[.subset, ], control = ctrl, family = family, ...)
   } else  {
-    mboost::glmboost(f, data = getTaskData(.task, .subset), control = ctrl, weights = .weights, family = family, ...)
+    mboost::glmboost(f, data = .task[.subset, ], control = ctrl, weights = .weights, family = family, ...)
   }
 }
 

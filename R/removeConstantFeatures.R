@@ -29,7 +29,7 @@
 removeConstantFeatures = function(task, perc = 0, dont.rm = character(0L),
   na.ignore = FALSE, tol = .Machine$double.eps^.5, show.info = getMlrOption("show.info")) {
   checkTask(task, "Task")
-  data = getTaskData(task)
+  data = as.data.frame(task)
   assertNumber(perc, lower = 0, upper = 1)
   assertSubset(dont.rm, choices = names(data))
   assertFlag(na.ignore)

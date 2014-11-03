@@ -59,6 +59,6 @@ createDummyFeatures.data.frame = function(obj, target = character(0L), method = 
 #' @export
 createDummyFeatures.SupervisedTask = function(obj, target = character(0L), method = "1-of-n", exclude = character(0)) {
   assertSubset(exclude, choices = getTaskFeatureNames(obj))
-  d = createDummyFeatures(obj = getTaskData(obj), target = obj$task.desc$target, method = method, exclude = exclude)
+  d = createDummyFeatures(obj = as.data.frame(obj), target = obj$task.desc$target, method = method, exclude = exclude)
   changeData(obj, d)
 }

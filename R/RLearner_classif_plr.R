@@ -17,7 +17,6 @@ makeRLearner.classif.plr = function() {
 
 #' @export
 trainLearner.classif.plr = function(.learner, .task, .subset, .weights = NULL, cp.type, cp,  ...) {
-  d = getTaskData(.task, .subset, target.extra = TRUE, recode.target = "01")
   # cp.type has preference
   if (!missing(cp.type))
     cp2 = cp.type
@@ -25,11 +24,13 @@ trainLearner.classif.plr = function(.learner, .task, .subset, .weights = NULL, c
     cp2 = cp
   else
     cp2 = NULL
-  args = list(x = d$data, y = d$target)
-  args$cp = cp2
+  args = c(list(
+    x = getTaskFeatures(.task, .subset),
+    y = getTaskTarget(.task, .subset),
+   cp = cp2
+  ), list(...))
   if (!is.null(.weights))
     args$weights = .weights
-  args = c(args, list(...))
   do.call(stepPlr::plr, args)
 }
 

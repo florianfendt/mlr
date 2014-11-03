@@ -1,6 +1,6 @@
 checkLearnerBeforeTrain = function(task, learner, weights) {
-  getColNames =  function(task, property){
-    .data = getTaskData(task)
+  getColNames =  function(task, property) {
+    .data = as.data.frame(task)
     has.it = vlapply(.data, function(x) any(property(x)))
     clipString(collapse(colnames(.data)[has.it], ", "), 50L)
   }

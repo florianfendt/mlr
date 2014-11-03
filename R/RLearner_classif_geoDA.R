@@ -13,8 +13,7 @@ makeRLearner.classif.geoDA = function() {
 
 #' @export
 trainLearner.classif.geoDA = function(.learner, .task, .subset, .weights = NULL,  ...) {
-  d = getTaskData(.task, .subset, target.extra = TRUE)
-  DiscriMiner::geoDA(variables = d$data, group = d$target, ...)
+  DiscriMiner::geoDA(variables = getTaskFeatures(.task, .subset), group = getTaskTarget(.task, .subset), ...)
 }
 
 #' @export

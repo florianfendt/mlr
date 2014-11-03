@@ -50,10 +50,10 @@ makeMulticlassWrapper = function(learner, mcw.method = "onevsrest") {
 
 #' @export
 trainLearner.MulticlassWrapper = function(.learner, .task, .subset, .weights = NULL, mcw.method, ...) {
-  .task = subsetTask(.task, .subset)
+  .task = .task[.subset,, task = TRUE]
   tn = .task$task.desc$target
-  d = getTaskData(.task)
-  y = getTaskTargets(.task)
+  d = as.data.frame(.task)
+  y = getTaskTarget(.task)
   cm = buildCMatrix(mcw.method, .task)
   x = multi.to.binary(y, cm)
   # now fit models

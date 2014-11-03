@@ -10,5 +10,5 @@ dropFeatures = function(task, features) {
   assertClass(task, classes = "Task")
   f = getTaskFeatureNames(task)
   assertSubset(features, choices = f)
-  subsetTask(task, features = setdiff(f, features))
+  task[, setdiff(f, features), task = TRUE]
 }

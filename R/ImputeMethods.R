@@ -283,7 +283,7 @@ imputeLearner = function(learner, features = NULL) {
           features = c(col, features)
       }
       task = constructor("impute", data = subset(data, select = features), target = col)
-      list(model = train(learner, subsetTask(task, features = features)), features = features)
+      list(model = train(learner, task[, features, task = TRUE]), features = features)
     },
 
     impute = function(data, target, col, model, features) {

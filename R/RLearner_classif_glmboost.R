@@ -22,10 +22,10 @@ trainLearner.classif.glmboost = function(.learner, .task, .subset, .weights = NU
   ctrl = learnerArgsToControl(mboost::boost_control, mstop, nu, risk)
   if (is.null(.weights)) {
     f = getTaskFormula(.task)
-    mboost::glmboost(f, data = getTaskData(.task, .subset), control = ctrl, , ...)
+    mboost::glmboost(f, data = .task[.subset, ], control = ctrl, , ...)
   } else  {
     f = as.formula(getTaskFormulaAsString(.task))
-    mboost::glmboost(f, data = getTaskData(.task, .subset), control = ctrl, weights = .weights, ...)
+    mboost::glmboost(f, data = .task[.subset, ], control = ctrl, weights = .weights, ...)
   }
 }
 

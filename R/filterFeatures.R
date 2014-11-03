@@ -47,7 +47,7 @@ filterFeatures = function(task, method = "rf.importance", fval = NULL, perc = NU
   if (select == "threshold")
     nselect = sum(fval$val >= threshold, na.rm = TRUE)
   features = as.character(head(sortByCol(fval, "val", asc = FALSE)$name, nselect))
-  subsetTask(task, features = features)
+  task[, features, task = TRUE]
 }
 
 checkFilterArguments = function(perc, abs, threshold) {

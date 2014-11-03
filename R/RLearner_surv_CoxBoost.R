@@ -23,17 +23,18 @@ makeRLearner.surv.CoxBoost = function() {
 
 #' @export
 trainLearner.surv.CoxBoost = function(.learner, .task, .subset, .weights = NULL, penalty = NULL, ...) {
-  data = getTaskData(.task, subset = .subset, target.extra = TRUE, recode.target = "rcens")
-  info = getFixDataInfo(data$data, factors.to.dummies = TRUE, ordered.to.int = TRUE)
-  data$data = as.matrix(fixDataForLearner(data$data, info))
+  target = recodeTarget(.task, .subset, recode = "rcens")
+  data = getTaskFeatures(.task, .subset)
+  info = getFixDataInfo(data, factors.to.dummies = TRUE, ordered.to.int = TRUE)
+  data = as.matrix(fixDataForLearner(data, info))
 
   if (is.null(penalty))
-    penalty = 9 * sum(data$target[, 2L])
+    penalty = 9 * sum(target[, 2L])
 
   attachTrainingInfo(CoxBoost::CoxBoost(
-    time = data$target[, 1L],
-    status = data$target[, 2L],
-    x = data$data,
+    time = target[, 1L],
+    status = target[, 2L],
+    x = data,
     weights = .weights,
     penalty = penalty,
     ...

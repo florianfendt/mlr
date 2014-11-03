@@ -38,8 +38,7 @@ makeRLearner.classif.bartMachine = function() {
 
 #' @export
 trainLearner.classif.bartMachine = function(.learner, .task, .subset, .weights = NULL, ...) {
-  d = getTaskData(.task, .subset, target.extra = TRUE)
-  bartMachine::bartMachine(X = d$data, y = d$target, ...)
+  bartMachine::bartMachine(X = getTaskFeatures(.task, .subset), y = getTaskTarget(.task, .subset), ...)
 }
 
 #' @export

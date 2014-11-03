@@ -1,14 +1,14 @@
 #' @export
-getTaskFeatures.SupervisedTask = function(task) {
-  task$data[, getTaskFeatureNames(task), drop = FALSE]
+getTaskFeatures.SupervisedTask = function(task, subset) {
+  task$data[subset, getTaskFeatureNames(task), drop = FALSE]
 }
 
 #' @export
-getTaskTarget.SupervisedTask = function(task, recode = "no", drop = TRUE) {
+getTaskTarget.SupervisedTask = function(task, subset, recode = "no", drop = TRUE) {
   assertString(recode)
   if (recode != "no")
     stopf("Recode option '%s' not supported by task '%s", recode, task$id)
-  task$data[, task$target, drop = drop]
+  task$data[subset, task$target, drop = drop]
 }
 
 #' @export

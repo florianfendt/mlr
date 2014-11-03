@@ -27,7 +27,7 @@ evalOptimizationState = function(learner, task, resampling, measures, par.set, b
     }
   } else if (inherits(control, "FeatSelControl")) {
     log.fun = logFunSelFeatures
-    task = subsetTask(task, features = bits.to.features(state, task))
+    task = task[, bits.to.features(state, task), task = TRUE]
   }
 
   # if no problems: resample + measure time

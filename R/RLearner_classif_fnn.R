@@ -18,14 +18,17 @@ makeRLearner.classif.fnn = function() {
 
 #' @export
 trainLearner.classif.fnn = function(.learner, .task, .subset, .weights = NULL,  ...) {
-  d = getTaskData(.task, .subset, target.extra = TRUE)
-  list(train = d, parset = list(...))
+  list(
+    target = getTaskTarget(.task, .subset),
+    data = getTaskFeatures(.task, .subset),
+    parset = list(...)
+  )
 }
 
 #' @export
 predictLearner.classif.fnn = function(.learner, .model, .newdata, ...) {
   m = .model$learner.model
-  pars = list(train = m$train$data, test = .newdata, cl = m$train$target)
+  pars = list(train = m$data, test = .newdata, cl = m$target)
   pars = c(pars, m$parset, list(...))
   p = do.call(FNN::knn, pars)
   attr(p, "nn.index") = NULL

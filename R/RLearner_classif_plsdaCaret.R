@@ -15,8 +15,7 @@ makeRLearner.classif.plsdaCaret = function() {
 
 #' @export
 trainLearner.classif.plsdaCaret = function(.learner, .task, .subset, .weights, ...) {
-  d = getTaskData(.task, .subset, target.extra = TRUE)
-  caret::plsda(d$data, d$target, method = "oscorespls", ...)
+  caret::plsda(getTaskFeatures(.task, .subset), getTaskTarget(.task, .subset), method = "oscorespls", ...)
 }
 
 #' @export

@@ -41,9 +41,9 @@ trainLearner.regr.mob = function(.learner, .task, .subset, .weights = NULL, alph
   f = as.formula(paste(target, "~", collapse(term.feats, sep = " + "), "|", collapse(part.feats, sep = " + ")))
 
   if (is.null(.weights)) {
-    party::mob(f, data = getTaskData(.task, .subset), control = cntrl, ...)
+    party::mob(f, data = .task[.subset, ], control = cntrl, ...)
   } else  {
-    party::mob(f, data = getTaskData(.task, .subset), control = cntrl, weights = .weights, ...)
+    party::mob(f, data = .task[.subset, ], control = cntrl, weights = .weights, ...)
   }
 }
 

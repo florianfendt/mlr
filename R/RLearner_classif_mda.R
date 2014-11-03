@@ -25,7 +25,7 @@ makeRLearner.classif.mda = function() {
 #' @export
 trainLearner.classif.mda = function(.learner, .task, .subset, .weights = NULL,  ...) {
   f = getTaskFormula(.task)
-  mda::mda(f, data = getTaskData(.task, .subset), ...)
+  mda::mda(f, data = .task[.subset, ], ...)
 }
 
 #' @export

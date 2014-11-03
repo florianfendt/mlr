@@ -40,9 +40,9 @@ trainLearner.classif.lssvm = function(.learner, .task, .subset, .weights = NULL,
   f = getTaskFormula(.task)
 
   if (base::length(kpar))
-    kernlab::lssvm(f, data = getTaskData(.task, .subset), kpar = kpar, ...)
+    kernlab::lssvm(f, data = .task[.subset, ], kpar = kpar, ...)
   else
-    kernlab::lssvm(f, data = getTaskData(.task, .subset), ...)
+    kernlab::lssvm(f, data = .task[.subset, ], ...)
 }
 
 #' @export

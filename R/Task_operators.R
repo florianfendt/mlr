@@ -81,13 +81,13 @@ getTaskFeatureNames.Task = function(task, drop = FALSE) {
 }
 
 #' @export
-getTaskTarget.Task = function(task, drop = FALSE) {
-  makeDataFrame(ncol = 0L, nrow = nrow(task$data), row.names = rownames(task$data))
+getTaskTarget.Task = function(task, subset, drop = FALSE) {
+  makeDataFrame(ncol = 0L, nrow = nrow(task$data[subset,, drop = FALSE]), row.names = rownames(task$data)[subset])
 }
 
 #' @export
-getTaskFeatures.Task = function(task) {
-  task$data
+getTaskFeatures.Task = function(task, subset) {
+  task$data[subset,, drop = FALSE]
 }
 
 getTaskFeatureTypes.Task = function(task) {

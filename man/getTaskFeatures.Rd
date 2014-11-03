@@ -3,11 +3,14 @@
 \alias{getTaskFeatures}
 \title{Get feature column(s) of a task.}
 \usage{
-getTaskFeatures(task)
+getTaskFeatures(task, subset)
 }
 \arguments{
 \item{task}{[\code{\link{Task}}]\cr
 The task.}
+
+\item{subset}{[\code{logical} | \code{integer}]\cr
+Subset of Features to extract.}
 }
 \value{
 [\code{\link{Task}}].

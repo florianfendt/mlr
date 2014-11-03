@@ -70,7 +70,7 @@ plotLearnerPrediction = function(learner, task, features = NULL, measures, cv = 
     checkClass(task, "RegrTask"),
     checkClass(task, "ClusterTask")
   )
-  td = getTaskDesc(task)
+  td = as.data.frame(task)
 
   # features and dimensionality
   fns = getTaskFeatureNames(task)
@@ -108,14 +108,14 @@ plotLearnerPrediction = function(learner, task, features = NULL, measures, cv = 
   requirePackages("ggplot2", why = "plotLearnerPrediction")
 
   # subset to features, set hyperpars
-  task = subsetTask(task, features = features)
+  task = task[, features, task = TRUE]
   learner = setHyperPars(learner, ...)
 
   # some shortcut names
   target = td$target
-  data = getTaskData(task)
+  data = as.data.frame(task)
   if (td$type != "cluster")
-    y = getTaskTargets(task)
+    y = getTaskTarget(task)
   x1n = features[1L]
   x1 = data[, x1n]
 

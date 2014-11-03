@@ -51,7 +51,7 @@ smote = function(task, rate, nn = 5L, standardize = TRUE, alt.logic = FALSE) {
     stopf("SMOTE cannot be used with weights in task!")
 
   # shortcuts
-  data = getTaskData(task)
+  data = as.data.frame(task)
   target = getTaskTargetNames(task)
   y = data[, target]
   x = dropNamed(data, target)

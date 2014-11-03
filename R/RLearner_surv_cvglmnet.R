@@ -40,10 +40,11 @@ makeRLearner.surv.cvglmnet = function() {
 
 #' @export
 trainLearner.surv.cvglmnet = function(.learner, .task, .subset, .weights = NULL,  ...) {
-  d = getTaskData(.task, .subset, target.extra = TRUE, recode.target = "rcens")
-  info = getFixDataInfo(d$data, factors.to.dummies = TRUE, ordered.to.int = TRUE)
-  args = c(list(x = as.matrix(fixDataForLearner(d$data, info)), y = d$target, family = "cox", parallel = FALSE), list(...))
-  rm(d)
+  target = recodeTarget(.task, .subset, recode = "rcens")
+  data = getTaskFeatures(.task, .subset)
+  info = getFixDataInfo(data, factors.to.dummies = TRUE, ordered.to.int = TRUE)
+  args = c(list(x = as.matrix(fixDataForLearner(data, info)), y = target, family = "cox", parallel = FALSE), list(...))
+  rm(target, data)
   if (!is.null(.weights))
     args$weights = .weights
 

@@ -42,7 +42,7 @@ getFilterValues = function(task, method = "rf.importance", nselect = getTaskNFea
     data = data.frame(
       name = names(res),
       val = unname(res),
-      type = vcapply(getTaskData(task, target.extra = TRUE)$data[fn], getClass1),
+      type = td$feature.types[fn],
       row.names = NULL,
       stringsAsFactors = FALSE)
   )

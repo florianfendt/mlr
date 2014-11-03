@@ -6,18 +6,20 @@
 #' @return [\code{data.frame} | \code{vector}] of target column(s).
 #' @family Task
 #' @export
-getTaskTarget = function(task, drop = TRUE) {
+getTaskTarget = function(task, subset, drop = TRUE) {
   UseMethod("getTaskTarget")
 }
 
 #' Get feature column(s) of a task.
 #'
 #' @template arg_task
+#' @param subset [\code{logical} | \code{integer}]\cr
+#'   Subset of Features to extract.
 #' @template ret_task
 #' @return [\code{data.frame}] of features.
 #' @family Task
 #' @export
-getTaskFeatures = function(task) {
+getTaskFeatures = function(task, subset) {
   UseMethod("getTaskFeatures")
 }
 
@@ -142,10 +144,10 @@ getTaskDesc = function(task) {
 #'  \dQuote{lcens}, \dQuote{rcens} and \dQuote{icens} for survival tasks.
 #' @return [data.frame].
 #' @export
-recodeTarget = function(task, subset, type = "no") {
+recodeTaskTarget = function(task, subset, type = "no") {
   if (identical(type, "no"))
-    return (getTaskTargets(task))
-  UseMethod("recodeTarget")
+    return (getTaskTarget(task))
+  UseMethod("recodeTaskTarget")
 }
 
 #' Get the type of a task

@@ -12,15 +12,15 @@ test_that("resample", {
   p3 = resample(lrn, multiclass.task, rin3)$pred
 
   inds = Reduce(c, rin1$test.inds)
-  y = getTaskTargets(multiclass.task)[inds]
+  y = getTaskTarget(multiclass.task)[inds]
   expect_equal(p1$data$id, inds)
   expect_equal(p1$data$truth, y)
   inds = Reduce(c, rin2$test.inds)
-  y = getTaskTargets(multiclass.task)[inds]
+  y = getTaskTarget(multiclass.task)[inds]
   expect_equal(p2$data$id, inds)
   expect_equal(p2$data$truth, y)
   inds = Reduce(c, rin3$test.inds)
-  y = getTaskTargets(multiclass.task)[inds]
+  y = getTaskTarget(multiclass.task)[inds]
   expect_equal(p3$data$id, inds)
   expect_equal(p3$data$truth, y)
 
@@ -36,9 +36,10 @@ test_that("resample", {
   rf4 = setThreshold(rf4, 1)
 
   expect_equal(rf1$data$response, rf2$data$response)
-  f1 = factor(rep(binaryclass.task$task.desc$positive, cv.i$size), levels = binaryclass.task$task.desc$class.levels)
+  td = getTaskDesc(binaryclass.task)
+  f1 = factor(rep(td$positive, cv.i$size), levels = td$class.levels)
   expect_equal(rf3$data$response, f1)
-  f2 = factor(rep(binaryclass.task$task.desc$negative, cv.i$size), levels = binaryclass.task$task.desc$class.levels)
+  f2 = factor(rep(td$negative, cv.i$size), levels = td$class.levels)
   expect_equal(rf4$data$response, f2)
 
   ct = makeClassifTask(data = iris[,c("Species", "Petal.Width")], target = "Species")
@@ -67,11 +68,10 @@ test_that("resampling, predicting train set works", {
   r = resample(lrn, multiclass.task, rdesc, measures = list(m1, m2))
   expect_true(!as.logical(is.na(r$aggr["mmce.train.mean"])))
   expect_true(!as.logical(is.na(r$aggr["mmce.test.mean"])))
-
 })
 
 
-test_that("ResampleInstance can bew created from string", {
+test_that("ResampleInstance can be created from string", {
   rin = makeResampleInstance("CV", size = 100)
   expect_is(rin$desc, "CVDesc")
   expect_equal(rin$size, 100)
@@ -109,6 +109,3 @@ test_that("resample returns errors", {
 
   configureMlr(on.learner.error = "stop")
 })
-
-
-

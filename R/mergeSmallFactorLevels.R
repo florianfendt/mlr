@@ -20,7 +20,7 @@ mergeSmallFactorLevels = function(task, cols = NULL, min.perc = 0.01, new.level 
   assertNumber(min.perc, lower = 0, upper = 1)
   assertString(new.level)
 
-  data = getTaskData(task)
+  data = as.data.frame(task)
   pred = function(x) is.factor(x) | is.character(x)
   cns = colnames(data)[vlapply(data, pred)]
   if (!is.null(cols)) {

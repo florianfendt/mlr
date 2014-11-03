@@ -13,8 +13,7 @@ Wrapped learner.}
 Task to train learner on.}
 
 \item{.subset}{[\code{integer}]\cr
-Subset of cases for training set, index the task with this.
-You probably want to use \code{\link{getTaskData}} for this purpose.}
+Subset of cases for training set, index the task with this.}
 
 \item{.weights}{[\code{numeric}]\cr
 Weights for each observation.}

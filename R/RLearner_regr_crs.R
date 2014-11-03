@@ -46,9 +46,9 @@ makeRLearner.regr.crs = function() {
 trainLearner.regr.crs = function(.learner, .task, .subset, .weights = NULL,  ...) {
   f = getTaskFormula(.task)
   if (is.null(.weights)) {
-    crs::crs(f, data = getTaskData(.task, .subset), ...)
+    crs::crs(f, data = .task[.subset, ], ...)
   } else  {
-    crs::crs(f, data = getTaskData(.task, .subset), weights = .weights, ...)
+    crs::crs(f, data = .task[.subset, ], weights = .weights, ...)
   }
 }
 

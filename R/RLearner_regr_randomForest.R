@@ -34,12 +34,12 @@ trainLearner.regr.randomForest = function(.learner, .task, .subset, .weights = N
   f = getTaskFormula(.task)
   par.vals = .learner$par.vals
 
-  m = randomForest::randomForest(f, data = getTaskData(.task, .subset), ...)
+  m = randomForest::randomForest(f, data = .task[.subset, ], ...)
 
   # we have to do some preprocessing here if we need the standard error
   if (.learner$predict.type == "se") {
     if (par.vals$se.method %in% c("bootstrap", "noisy.bootstrap")) {
-      train = getTaskData(.task, .subset)
+      train = .task[.subset, ]
 
       # set some params for bootstraping
       numberOfBootstraps = par.vals[["nr.of.bootstrap.samples"]]

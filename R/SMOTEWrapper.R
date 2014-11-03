@@ -65,7 +65,7 @@ makeSMOTEWrapper = function(learner, sw.rate = 1, sw.nn = 5L,
 trainLearner.SMOTEWrapper = function(.learner, .task, .subset, .weights = NULL, sw.rate = 1,
   sw.standardize = TRUE, sw.alt.logic = FALSE, ...) {
 
-  .task = subsetTask(.task, .subset)
+  .task = .task[.subset,, task = TRUE]
   .task = smote(.task, rate = sw.rate, standardize = sw.standardize, alt.logic = sw.alt.logic)
   m = train(.learner$next.learner, .task, weights = .weights)
   makeChainModel(next.model = m, cl = "SMOTEModel")

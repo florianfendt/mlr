@@ -98,11 +98,10 @@ makeFilter(
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
     if (inherits(task, "SurvTask")) {
-      data = getTaskData(task, target.extra = TRUE, recode.target = "rcens")
-      data = cbind(..surv = data$target, data$data)
+      data = cbind(..surv = recodeTaskTarget(task, type = "rcens"), getTaskFeatures(task))
       target.ind = 1L
     } else {
-      data = getTaskData(task)
+      data = as.data.frame(task)
       target.ind = match(getTaskTargetNames(task), colnames(data))
     }
 
@@ -127,8 +126,7 @@ makeFilter(
   supported.tasks = "regr",
   supported.features = "numerics",
   fun = function(task, nselect, ...) {
-    data = getTaskData(task, target.extra = TRUE)
-    y = care::carscore(Xtrain = data$data, Ytrain = data$target, verbose = FALSE, ...)^2
+    y = care::carscore(Xtrain = getTaskFeatures(task), Ytrain = getTaskTarget(task), verbose = FALSE, ...)^2
     setNames(as.double(y), names(y))
   }
 )
@@ -140,7 +138,7 @@ makeFilter(
   supported.tasks = c("classif", "regr", "surv"),
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
-    im = randomForestSRC::rfsrc(getTaskFormula(task), data = getTaskData(task), proximity = FALSE, forest = FALSE, ...)$importance
+    im = randomForestSRC::rfsrc(getTaskFormula(task), data = as.data.frame(task), proximity = FALSE, forest = FALSE, ...)$importance
     if (inherits(task, "ClassifTask")) {
       ns = rownames(im)
       y = im[, "all"]
@@ -159,7 +157,7 @@ makeFilter(
   supported.tasks = c("classif", "regr", "surv"),
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
-    im = randomForestSRC::var.select(getTaskFormula(task), getTaskData(task),
+    im = randomForestSRC::var.select(getTaskFormula(task), as.data.frame(task),
       method = "md", verbose = FALSE, ...)$md.obj$order
     setNames(-im[, 1L], rownames(im))
   }
@@ -172,7 +170,7 @@ makeFilter(
   supported.tasks = "regr",
   supported.features = "numerics",
   fun = function(task, nselect, ...) {
-    y = FSelector::linear.correlation(getTaskFormula(task), data = getTaskData(task))
+    y = FSelector::linear.correlation(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
   }
 )
@@ -184,7 +182,7 @@ makeFilter(
   supported.tasks = c("regr"),
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
-    y = FSelector::rank.correlation(getTaskFormula(task), data = getTaskData(task))
+    y = FSelector::rank.correlation(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
   }
 )
@@ -196,7 +194,7 @@ makeFilter(
   supported.tasks = c("classif", "regr"),
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
-    y = FSelector::information.gain(getTaskFormula(task), data = getTaskData(task))
+    y = FSelector::information.gain(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
   }
 )
@@ -208,7 +206,7 @@ makeFilter(
   supported.tasks = c("classif", "regr"),
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
-    y = FSelector::gain.ratio(getTaskFormula(task), data = getTaskData(task))
+    y = FSelector::gain.ratio(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
   }
 )
@@ -220,7 +218,7 @@ makeFilter(
   supported.tasks = c("classif", "regr"),
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
-    y = FSelector::symmetrical.uncertainty(getTaskFormula(task), data = getTaskData(task))
+    y = FSelector::symmetrical.uncertainty(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
   }
 )
@@ -232,7 +230,7 @@ makeFilter(
   supported.tasks = c("classif", "regr"),
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
-    y = FSelector::chi.squared(getTaskFormula(task), data = getTaskData(task))
+    y = FSelector::chi.squared(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
   }
 )
@@ -244,7 +242,7 @@ makeFilter(
   supported.tasks = c("classif", "regr"),
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
-    y = FSelector::relief(getTaskFormula(task), data = getTaskData(task))
+    y = FSelector::relief(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
   }
 )
@@ -256,7 +254,7 @@ makeFilter(
   supported.tasks = c("classif", "regr"),
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
-    y = FSelector::oneR(getTaskFormula(task), data = getTaskData(task))
+    y = FSelector::oneR(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
   }
 )
@@ -280,7 +278,7 @@ makeFilter(
     fns = getTaskFeatureNames(task)
     res = double(length(fns))
     for (i in seq_along(fns)) {
-      subtask = subsetTask(task, features = fns[i])
+      subtask = task[, fns[i], task = TRUE]
       res[i] = resample(learner = perf.learner, task = subtask, resampling = perf.resampling, measures = perf.measure, show.info = FALSE)$aggr
     }
     if (perf.measure[[1L]]$minimize)
@@ -296,7 +294,7 @@ makeFilter(
   supported.tasks = c("classif"),
   supported.features = c("numerics"),
   fun = function(task, nselect, ...) {
-    data = getTaskData(task)
+    data = as.data.frame(task)
     sapply(getTaskFeatureNames(task), function(feat.name) {
       f = as.formula(paste0(feat.name,"~", getTaskTargetNames(task)))
       aov.t = aov(f, data = data)
@@ -312,7 +310,7 @@ makeFilter(
   supported.tasks = c("classif"),
   supported.features = c("numerics", "factors"),
   fun = function(task, nselect, ...) {
-    data = getTaskData(task)
+    data = as.data.frame(task)
     sapply(getTaskFeatureNames(task), function(feat.name) {
       f = as.formula(paste0(feat.name,"~", getTaskTargetNames(task)))
       t = kruskal.test(f, data = data)
@@ -328,7 +326,7 @@ makeFilter(
   supported.tasks = c("classif", "regr", "surv"),
   supported.features = c("numerics"),
   fun = function(task, nselect, na.rm = FALSE, ...) {
-    data = getTaskData(task)
+    data = as.data.frame(task)
     sapply(getTaskFeatureNames(task), function(feat.name) {
       var(data[[feat.name]], na.rm = na.rm)
     })

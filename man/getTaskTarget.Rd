@@ -3,7 +3,7 @@
 \alias{getTaskTarget}
 \title{Get target column(s) of a task.}
 \usage{
-getTaskTarget(task, drop = TRUE)
+getTaskTarget(task, subset, drop = TRUE)
 }
 \arguments{
 \item{task}{[\code{\link{Task}}]\cr

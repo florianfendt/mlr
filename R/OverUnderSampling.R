@@ -20,9 +20,9 @@
 oversample = function(task, rate) {
   checkTask(task, "ClassifTask", binary = TRUE)
   assertNumber(rate, lower = 1)
-  j = sampleBinaryClass(getTaskTargets(task), rate, cl = "min", clreplace = TRUE, 
+  j = sampleBinaryClass(getTaskTarget(task), rate, cl = "min", clreplace = TRUE,
     othreplace = FALSE, bagging = FALSE)
-  subsetTask(task, j)
+  task[j,, task = TRUE]
 }
 
 #' @rdname oversample
@@ -30,7 +30,7 @@ oversample = function(task, rate) {
 undersample = function(task, rate) {
   checkTask(task, "ClassifTask", binary = TRUE)
   assertNumber(rate, lower = 0, upper = 1)
-  j = sampleBinaryClass(getTaskTargets(task), rate, cl = "max", clreplace = FALSE,
+  j = sampleBinaryClass(getTaskTarget(task), rate, cl = "max", clreplace = FALSE,
     othreplace = FALSE, bagging = FALSE)
-  subsetTask(task, j)
+  task[j,, task = TRUE]
 }

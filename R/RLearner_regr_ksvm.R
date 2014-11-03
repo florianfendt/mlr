@@ -41,9 +41,9 @@ trainLearner.regr.ksvm = function(.learner, .task, .subset, .weights = NULL, deg
   f = getTaskFormula(.task)
   # difference in missing(kpar) and kpar = list()!
   if (base::length(kpar))
-    kernlab::ksvm(f, data = getTaskData(.task, .subset), kpar = kpar, ...)
+    kernlab::ksvm(f, data = .task[.subset, ], kpar = kpar, ...)
   else
-    kernlab::ksvm(f, data = getTaskData(.task, .subset), ...)
+    kernlab::ksvm(f, data = .task[.subset, ], ...)
 }
 
 #' @export

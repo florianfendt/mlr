@@ -38,7 +38,7 @@ makeDownsampleWrapper = function(learner, dw.perc = 1, dw.stratify = FALSE) {
 trainLearner.DownsampleWrapper = function(.learner, .task, .subset, .weights = NULL,
   dw.perc = 1, dw.stratify = TRUE, ...) {
 
-  .task = subsetTask(.task, .subset)
+  .task = .task[.subset,, task = TRUE]
   .task = downsample(.task, perc = dw.perc, stratify = dw.stratify)
   m = train(.learner$next.learner, .task, weights = .weights)
   makeChainModel(next.model = m, cl = "DownsampleModel")

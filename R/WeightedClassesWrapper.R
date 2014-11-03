@@ -89,7 +89,7 @@ makeWeightedClassesWrapper = function(learner, wcw.param = NULL, wcw.weight = 1)
 
 #' @export
 trainLearner.WeightedClassesWrapper = function(.learner, .task, .subset, .weights, wcw.weight = 1, ...) {
-  .task = subsetTask(.task, .subset)
+  .task = .task[.subset,, task = TRUE]
   td = getTaskDesc(.task)
   levs = td$class.levels
   p = .learner$wcw.param
@@ -102,7 +102,7 @@ trainLearner.WeightedClassesWrapper = function(.learner, .task, .subset, .weight
     names(wcw.weight) = levs
   }
   if (is.null(p)) {
-    y = as.character(getTaskTargets(.task))
+    y = as.character(getTaskTarget(.task))
     weights = wcw.weight[y]
     m = train(.learner$next.learner, task = .task, weights = weights)
   } else {
@@ -111,5 +111,3 @@ trainLearner.WeightedClassesWrapper = function(.learner, .task, .subset, .weight
   }
   makeChainModel(next.model = m, cl = "WeightedClassesModel")
 }
-
-

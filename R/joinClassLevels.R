@@ -30,7 +30,7 @@ joinClassLevels.ClassifTask = function(task, new.levels) {
     y[y %in% levs] = nn
   }
 
-  data = getTaskData(task)
+  data = as.data.frame(task)
   data[[target]] = as.factor(y)
   changeData(task, data)
 }

@@ -53,7 +53,7 @@ makeTuneWrapper = function(learner, resampling, measures, par.set, control, show
 
 #' @export
 trainLearner.TuneWrapper = function(.learner, .task, .subset,  ...) {
-  .task = subsetTask(.task, .subset)
+  .task = .task[.subset,, task = TRUE]
   or = tuneParams(.learner$next.learner, .task, .learner$resampling, .learner$measures,
     .learner$opt.pars, .learner$control, .learner$show.info)
   lrn = setHyperPars(.learner$next.learner, par.vals = or$x)

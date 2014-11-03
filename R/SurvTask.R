@@ -67,7 +67,7 @@ print.SurvTask = function(x, ...) {
 }
 
 #' @export
-recodeTarget.SurvTask = function(task, subset, recode = "no") {
+recodeTaskTarget.SurvTask = function(task, subset, type = "no") {
   assertChoice(recode, c("lcens", "rcens", "icens"))
 
   y = getTaskTarget(task)[subset,, drop = FALSE]

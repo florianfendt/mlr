@@ -28,7 +28,7 @@ makeCostSensClassifWrapper = function(learner) {
 #' @export
 trainLearner.CostSensClassifWrapper = function(.learner, .task, .subset, ...) {
   # note that no hyperpars can be in ..., they would refer to the wrapper
-  .task = subsetTask(.task, subset = .subset)
+  .task = .task[.subset,, task = TRUE]
   feats = as.data.frame(.task)
   costs = getTaskCosts(.task)
   cns = colnames(costs)

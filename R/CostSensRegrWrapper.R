@@ -26,7 +26,7 @@ makeCostSensRegrWrapper = function(learner) {
 #' @export
 trainLearner.CostSensRegrWrapper = function(.learner, .task, .subset, ...) {
   # note that no hyperpars can be in ..., they would refer to the wrapper
-  .task = subsetTask(.task, subset = .subset)
+  .task = .task[subset,, task = TRUE]
   costs = getTaskCosts(.task)
   classes = .task$class.levels
   feats = as.data.frame(.task)

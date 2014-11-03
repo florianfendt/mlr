@@ -19,7 +19,7 @@ makeRLearner.cluster.DBScan = function() {
 #' @export
 trainLearner.cluster.DBScan = function(.learner, .task, .subset, .weights = NULL,  ...) {
   ctrl = RWeka::Weka_control(...)
-  RWeka::DBScan(getTaskData(.task, .subset), control = ctrl)
+  RWeka::DBScan(.task[.subset, ], control = ctrl)
 }
 
 #' @export

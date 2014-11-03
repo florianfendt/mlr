@@ -23,7 +23,7 @@ makeRLearner.classif.PART = function() {
 trainLearner.classif.PART = function(.learner, .task, .subset, .weights = NULL,  ...) {
   f = getTaskFormula(.task)
   ctrl = RWeka::Weka_control(..., Q = as.integer(runif(1L, min = -.Machine$integer.max, max = .Machine$integer.max)))
-  RWeka::PART(f, data = getTaskData(.task, .subset), control = ctrl, na.action = na.pass)
+  RWeka::PART(f, data = .task[.subset, ], control = ctrl, na.action = na.pass)
 }
 
 #' @export

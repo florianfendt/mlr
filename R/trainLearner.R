@@ -13,7 +13,6 @@
 #'   Task to train learner on.
 #' @param .subset [\code{integer}]\cr
 #'   Subset of cases for training set, index the task with this.
-#'   You probably want to use \code{\link{getTaskData}} for this purpose.
 #' @param .weights [\code{numeric}]\cr
 #'   Weights for each observation.
 #' @param ... [any]\cr

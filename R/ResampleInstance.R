@@ -74,7 +74,7 @@ makeResampleInstance = function(desc, task, size, ...) {
     if (is.null(task))
       stop("Stratification always needs the task!")
 
-    y = getTaskTargets(task)
+    y = getTaskTarget(task)
     grp = switch(getTaskType(task),
       "classif" = {
         lapply(task$class.levels, function(x) which(x == y))
@@ -82,7 +82,7 @@ makeResampleInstance = function(desc, task, size, ...) {
       "surv" = {
         lapply(0:1, function(x) which(x == y[, 2L]))
       },
-      stopf("Stratification for tasks of type '%s' not supported", task$task.desc$type)
+      stopf("Stratification for tasks of type '%s' not supported", getTaskType(task))
     )
 
     # resample on every class

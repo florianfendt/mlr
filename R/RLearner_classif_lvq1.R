@@ -14,15 +14,16 @@ makeRLearner.classif.lvq1 = function() {
 
 #' @export
 trainLearner.classif.lvq1 = function(.learner, .task, .subset, .weights = NULL,  ...) {
-  d = getTaskData(.task, .subset, target.extra = TRUE)
+  target = getTaskTarget(.task, .subset)
+  data = getTaskFeatures(.task, .subset)
   cdbk.args = insert(list(), list(...), c("size", "k", "prior"))
-  cdbk.args$x = d$data
-  cdbk.args$cl = d$target
+  cdbk.args$cl = target
+  cdbk.args$x = data
   codebk = do.call(class::lvqinit, cdbk.args)
 
   lvq.args = insert(list(), list(...), c("niter", "alpha"))
-  lvq.args$x = d$data
-  lvq.args$cl = d$target
+  lvq.args$cl = target
+  lvq.args$x = data
   lvq.args$codebk = codebk
   do.call(class::lvq1, lvq.args)
 }

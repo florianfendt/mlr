@@ -42,9 +42,8 @@ trainLearner.classif.lqa = function(.learner, .task, .subset, .weights = NULL,
   var.eps, max.steps, conv.eps, conv.stop, c1, digits, ...) {
 
   ctrl = learnerArgsToControl(lqa::lqa.control, var.eps, max.steps, conv.eps, conv.stop, c1, digits)
-  d = getTaskData(.task, .subset, target.extra = TRUE, recode.target = "01")
-  args = c(list(x = d$data, y = d$target, family = binomial(), control = ctrl), list(...))
-  rm(d)
+  args = c(list(x = getTaskFeatures(.task, .subset), y = getTaskTarget(.task, .subset),
+      family = binomial(), control = ctrl), list(...))
   if (!args$penalty %in% c("adaptive.lasso", "ao", "bridge", "genet", "lasso",
                            "oscar", "penalreg", "ridge", "scad")) {
     args$lambda = NULL

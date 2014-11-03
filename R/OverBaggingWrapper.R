@@ -71,8 +71,8 @@ makeOverBaggingWrapper = function(learner, obw.iters = 10L, obw.rate = 1, obw.ma
 trainLearner.OverBaggingWrapper = function(.learner, .task, .subset, .weights = NULL,
    obw.iters = 10L, obw.rate = 1, obw.maxcl = "boot", ...) {
 
-  .task = subsetTask(.task, subset = .subset)
-  y = getTaskTargets(.task)
+  .task = .task[.subset,, task = TRUE]
+  y = getTaskTarget(.task)
   models = lapply(seq_len(obw.iters), function(i) {
     bag = sampleBinaryClass(y, obw.rate, cl = "min", clreplace = TRUE,
       othreplace = (obw.maxcl == "boot"), bagging = TRUE)

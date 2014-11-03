@@ -70,7 +70,7 @@ makeFilterWrapper = function(learner, fw.method = "rf.importance", fw.perc = NUL
 trainLearner.FilterWrapper = function(.learner, .task, .subset, .weights = NULL,
   fw.method = "rf.importance", fw.perc = NULL, fw.abs = NULL, fw.threshold = NULL, ...) {
 
-  .task = subsetTask(.task, subset = .subset)
+  .task = .task[.subset,, task = TRUE]
   .task = do.call(filterFeatures, c(list(task = .task, method = fw.method, perc = fw.perc, abs = fw.abs, threshold = fw.threshold), .learner$more.args))
   m = train(.learner$next.learner, .task, weights = .weights)
   makeChainModel(next.model = m, cl = "FilterModel")

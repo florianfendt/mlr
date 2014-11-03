@@ -47,7 +47,7 @@ print.ClassifTask = function(x, ...) {
 }
 
 #' @export
-recodeTarget.ClassifTask = function(task, subset, recode = "no") {
+recodeTaskTarget.ClassifTask = function(task, subset, type = "no") {
   assertChoice(recode, c("01", "-1+1"))
   y = task$data[subset, task$target, drop = TRUE]
   if (type == "01")

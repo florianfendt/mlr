@@ -146,7 +146,7 @@ trainLearner.StackedLearner = function(.learner, .task, .subset, ...) {
   bls = .learner$base.learners
   ids = names(bls)
   # reduce to subset we want to train ensemble on
-  .task = subsetTask(.task, subset = .subset)
+  .task = .task[.subset,, task = TRUE]
   # init prob result matrix, where base learners store predictions
   probs = makeDataFrame(getTaskRows(.task), ncol = length(bls), col.types = "numeric",
     col.names = ids)
@@ -284,10 +284,10 @@ stackNoCV = function(learner, task) {
 
   # now fit the super learner for predicted_probs --> target
   tn = egtTaskTargetNames(task)
-  probs[[tn]] = getTaskTargets(task)
+  probs[[tn]] = getTaskTarget(task)
   if (use.feat) {
     # add data with normal features
-    feat = getTaskData(task)
+    feat = as.data.frame(task)
     feat = feat[, !colnames(feat) %in% tn, drop = FALSE]
     probs = cbind(probs, feat)
     super.task = makeSuperLearnerTask(learner, data = probs, target = tn)
@@ -330,13 +330,13 @@ stackCV = function(learner, task) {
 
   pred.train = as.list(probs[order(test.inds), , drop = FALSE])
 
-  probs[[tn]] = getTaskTargets(task)[test.inds]
+  probs[[tn]] = getTaskTarget(task)[test.inds]
 
   # now fit the super learner for predicted_probs --> target
   probs = probs[order(test.inds), , drop = FALSE]
   if (use.feat) {
     # add data with normal features IN CORRECT ORDER
-    feat = getTaskData(task)#[test.inds, ]
+    feat = as.data.frame(task)#[test.inds, ]
     feat = feat[, !colnames(feat)%in%tn, drop = FALSE]
     predData = cbind(probs, feat)
     super.task = makeSuperLearnerTask(learner, data = predData, target = tn)

@@ -41,7 +41,7 @@ trainLearner.classif.cforest = function(.learner, .task, .subset, .weights = NUL
                                      nresample, maxsurrogate, maxdepth,
                                      savesplitstats, ...) {
   f = getTaskFormula(.task)
-  d = getTaskData(.task, .subset)
+  d = .task[.subset, ]
   ctrl = learnerArgsToControl(party::cforest_unbiased, ntree, mtry, replace, fraction,
                               trace, pvalue, teststat, testtype, mincriterion,
                               minprob, minsplit, minbucket, stump, randomsplits,

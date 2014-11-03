@@ -53,7 +53,7 @@ makeFeatSelWrapper = function(learner, resampling, measures, bit.names, bits.to.
 
 #' @export
 trainLearner.FeatSelWrapper = function(.learner, .task, .subset,  ...) {
-  task = subsetTask(.task, .subset)
+  task = .task[.subset,, task = TRUE]
   if (length(.learner$bit.names) == 0)
     #FIXME: really look at bitnames / bits.to.features stuff and test it.
     # do we need the extra case here?
@@ -64,7 +64,7 @@ trainLearner.FeatSelWrapper = function(.learner, .task, .subset,  ...) {
       measures = .learner$measures,
       bit.names = .learner$bit.names, bits.to.features = .learner$bits.to.features,
       control = .learner$control, show.info =.learner$show.info)
-  task = subsetTask(task, features = or$x)
+  task = task[, or$x, task = TRUE]
   m = train(.learner$next.learner, task)
   x = makeChainModel(next.model = m, cl = "FeatSelModel")
   x$opt.result = or
@@ -76,4 +76,3 @@ predictLearner.FeatSelWrapper = function(.learner, .model, .newdata, ...) {
   .newdata = .newdata[, .model$learner.model$opt.result$x, drop = FALSE]
   predictLearner(.learner$next.learner, .model$learner.model$next.model, .newdata, ...)
 }
-

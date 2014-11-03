@@ -21,7 +21,7 @@ makeRLearner.cluster.kmeans = function() {
 
 #' @export
 trainLearner.cluster.kmeans = function(.learner, .task, .subset, .weights = NULL, ...) {
-  stats::kmeans(getTaskData(.task, .subset), ...)
+  stats::kmeans(.task[.subset, ], ...)
 }
 
 #' @export

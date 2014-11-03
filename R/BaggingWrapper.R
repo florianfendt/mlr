@@ -83,7 +83,7 @@ trainLearner.BaggingWrapper = function(.learner, .task, .subset, .weights = NULL
 
   if (missing(bw.size))
     bw.size = if (bw.replace) 1 else 0.632
-  .task = subsetTask(.task, subset = .subset)
+  .task = .task[subset = .subset,, task = TRUE]
   n = getTaskRows(.task)
   m = round(n * bw.size)
   allinds = seq_len(n)
@@ -100,11 +100,11 @@ trainLearner.BaggingWrapper = function(.learner, .task, .subset, .weights = NULL
       bag = sample(which(blocking %in% bag.blocks))
     } else {
       bag = sample(allinds, m, replace = bw.replace)
-    } 
+    }
     w = .weights[bag]
     if (bw.feats < 1) {
       feats2 = sample(feats, k, replace = FALSE)
-      .task2 = subsetTask(.task, features = feats2)
+      .task2 = .task[, feats2, task = TRUE]
       train(.learner$next.learner, .task2, subset = bag, weights = w)
     } else {
       train(.learner$next.learner, .task, subset = bag, weights = w)

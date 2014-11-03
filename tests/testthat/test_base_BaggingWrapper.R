@@ -41,7 +41,7 @@ test_that("BaggingWrapper", {
   lrn2 = setPredictType(lrn2, "se")
   m = train(lrn2, regr.task)
   p = predict(m, regr.task)
-  
+
   # blocking for BaggingWrapper is testet ind test_base_blocking.R
 })
 
@@ -61,5 +61,3 @@ test_that("BaggingWrapper works with 1 obs in newdata", {
   p = predict(mod, newdata = nd)
   expect_true(!is.na(performance(p)))
 })
-
-

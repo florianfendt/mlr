@@ -35,7 +35,6 @@ Non numerical features will be left untouched and passed to the result.
 }
 \seealso{
 Other eda_and_preprocess: \code{\link{createDummyFeatures}};
-  \code{\link{dropFeatures}};
   \code{\link{mergeSmallFactorLevels}};
   \code{\link{removeConstantFeatures}};
   \code{\link{summarizeColumns}}

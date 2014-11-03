@@ -35,7 +35,7 @@ benchmark = function(learners, tasks, resamplings, measures, show.info = getMlrO
   tasks = ensureVector(tasks, 1L, "Task")
   assertList(tasks, min.len = 1L)
   checkListElementClass(tasks, "Task")
-  task.ids = extractSubList(tasks, c("task.desc", "id"))
+  task.ids = vcapply(tasks, getTaskId)
   if (anyDuplicated(task.ids))
     stop("Tasks need unique ids!")
   names(tasks) = task.ids

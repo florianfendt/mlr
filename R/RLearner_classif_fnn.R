@@ -28,6 +28,7 @@ trainLearner.classif.fnn = function(.learner, .task, .subset, .weights = NULL,  
 #' @export
 predictLearner.classif.fnn = function(.learner, .model, .newdata, ...) {
   m = .model$learner.model
+  print(str(m))
   pars = list(train = m$data, test = .newdata, cl = m$target)
   pars = c(pars, m$parset, list(...))
   p = do.call(FNN::knn, pars)

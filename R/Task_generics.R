@@ -1,3 +1,13 @@
+#' Get the id of a task.
+#'
+#' @template arg_task
+#' @return [\code{character(1)}].
+#' @family Task
+#' @export
+getTaskId = function(task) {
+  task$id
+}
+
 #' Get target column(s) of a task.
 #'
 #' @template arg_task
@@ -61,6 +71,7 @@ getTaskNFeats = function(task) {
   UseMethod("getTaskNFeats")
 }
 
+
 #' Get formula of a task.
 #'
 #' This is simply \dQuote{<target> ~ .}.
@@ -76,7 +87,7 @@ getTaskNFeats = function(task) {
 #' @return [\code{formula}].
 #' @family task
 #' @export
-getTaskFormula = function(task, target = getTaskTargetNames(task), env = NULL) {
+getTaskFormula = function(task, target = getTaskTargetNames(task), env = parent.frame()) {
   as.formula(getTaskFormulaAsString(task, target), env = env)
 }
 
@@ -131,7 +142,6 @@ getTaskCols = function(task) {
 #' @return [named list].
 #' @export
 getTaskDesc = function(task) {
-  # FIXME: we need this for some models, too
   UseMethod("getTaskDesc")
 }
 

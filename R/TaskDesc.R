@@ -1,3 +1,7 @@
+getTaskDesc.TaskDesc = function(task) {
+  task
+}
+
 getTaskTargetNames.TaskDesc = function(task) {
   task$target
 }

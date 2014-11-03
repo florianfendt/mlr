@@ -45,7 +45,6 @@ differ from the mode value.
 }
 \seealso{
 Other eda_and_preprocess: \code{\link{createDummyFeatures}};
-  \code{\link{dropFeatures}};
   \code{\link{mergeSmallFactorLevels}};
   \code{\link{normalizeFeatures}};
   \code{\link{summarizeColumns}}

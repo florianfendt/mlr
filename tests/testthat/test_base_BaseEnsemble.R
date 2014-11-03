@@ -16,4 +16,3 @@ test_that("BaseEnsemble", {
   expect_true(setequal(getHyperPars(be), list(a.xval = 0L, a.minsplit = 11L,
     b.fit = FALSE, b.C = 2, foo = 12)))
 })
-

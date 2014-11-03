@@ -34,5 +34,4 @@ test_that("measures", {
   pred = predict(mod, task = multiclass.task, subset = multiclass.test.inds)
   perf = performance(pred, measures = multiclass.auc)
   expect_is(perf, "numeric")
-
 })

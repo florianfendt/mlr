@@ -59,12 +59,12 @@ getTaskClassLevels = function(task) {
   UseMethod("getTaskClassLevels")
 }
 
-getTaskClassLevels.default = function(task) {
-  getTaskDesc(task)$class.levels
-}
-
 getTaskClassLevels.ClassifTask = function(task) {
   task$class.levels
+}
+
+getTaskClassLevels.default = function(task) {
+  getTaskDesc(task)$class.levels
 }
 
 isBinaryClassifTask = function(task) {

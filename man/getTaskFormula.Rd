@@ -4,7 +4,8 @@
 \alias{getTaskFormulaAsString}
 \title{Get formula of a task.}
 \usage{
-getTaskFormula(task, target = getTaskTargetNames(task), env = NULL)
+getTaskFormula(task, target = getTaskTargetNames(task),
+  env = parent.frame())
 
 getTaskFormulaAsString(task, target = getTaskTargetNames(task))
 }

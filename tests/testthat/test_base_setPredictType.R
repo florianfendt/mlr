@@ -16,7 +16,6 @@ test_that("predict.type gets propagated", {
   expect_true(is.data.frame(prob) && nrow(prob) == nrow(iris))
 })
 
-
 test_that("predict.type works with BaggingWrapper, special case", {
   lrn1 = makeLearner("classif.rpart", predict.type = "prob")
   expect_error(makeBaggingWrapper(lrn1, bw.iters = 3), "response")
@@ -31,4 +30,3 @@ test_that("predict.type works with BaggingWrapper, special case", {
   prob = getProbabilities(p)
   expect_true(is.data.frame(prob) && nrow(prob) == nrow(iris))
 })
-

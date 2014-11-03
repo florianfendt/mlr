@@ -2,9 +2,11 @@ context("TaskDesc")
 
 test_that("TaskDesc", {
   ct = makeClassifTask(target = "Class", binaryclass.df, id = "mytask", positive = "M")
-  expect_equal(ct$task.desc$id, "mytask")
-  expect_equal(ct$task.desc$positive, "M")
-  expect_equal(ct$task.desc$negative, "R")
+  td = getTaskDesc(ct)
+  expect_equal(td$id, "mytask")
+  expect_equal(td$positive, "M")
+  expect_equal(td$negative, "R")
+  skip()
 
   ct = makeClassifTask(target = "Species", multiclass.df, id = "mytask2")
   expect_equal(ct$task.desc$id, "mytask2")

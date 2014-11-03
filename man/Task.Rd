@@ -10,23 +10,35 @@
 \alias{makeClusterTask}
 \alias{makeCostSensTask}
 \alias{makeRegrTask}
+\alias{makeSupervisedTask}
 \alias{makeSurvTask}
+\alias{makeTask}
+\alias{makeUnsupervisedTask}
 \title{Create a classification, regression, survival, cluster, or cost-sensitive classification task.}
 \usage{
-makeClassifTask(id, data, target, weights = NULL, blocking = NULL,
-  positive = NA_character_, fixup.data = "warn", check.data = TRUE)
+makeClassifTask(id = deparse(substitute(data)), data, target,
+  weights = NULL, blocking = NULL, positive = NA_character_)
 
-makeClusterTask(id, data, weights = NULL, blocking = NULL,
-  fixup.data = "warn", check.data = TRUE)
+makeClusterTask(id = deparse(substitute(data)), data, weights = NULL,
+  blocking = NULL)
 
-makeCostSensTask(id, data, costs, blocking = NULL, fixup.data = "warn",
-  check.data = TRUE)
+makeCostSensTask(id = deparse(substitute(data)), data, costs,
+  blocking = NULL)
 
-makeRegrTask(id, data, target, weights = NULL, blocking = NULL,
-  fixup.data = "warn", check.data = TRUE)
+makeRegrTask(id = deparse(substitute(data)), data, target, weights = NULL,
+  blocking = NULL)
 
-makeSurvTask(id, data, target, censoring = "rcens", weights = NULL,
-  blocking = NULL, fixup.data = "warn", check.data = TRUE)
+makeSupervisedTask(id = deparse(substitute(data)), data, target,
+  weights = NULL, blocking = NULL)
+
+makeSurvTask(id = deparse(substitute(data)), data, target,
+  censoring = "rcens", weights = NULL, blocking = NULL)
+
+makeTask(id = as.character(deparse(substitute(data))), data, weights = NULL,
+  blocking = NULL)
+
+makeUnsupervisedTask(id = deparse(substitute(data)), data, weights = NULL,
+  blocking = NULL)
 }
 \arguments{
 \item{id}{[\code{character(1)}]\cr
@@ -36,10 +48,8 @@ Default is the name of R variable passed to \code{data}.}
 \item{data}{[\code{data.frame}]\cr
 A data frame containing the features and target variable(s).}
 
-\item{target}{[\code{character(1)} | \code{character(2)}]\cr
-Name of the target variable.
-For survival analysis these are the names of the survival time and event columns,
-so it has length 2.}
+\item{target}{[\code{character}]\cr
+Name of the target column(s) in \code{data}.}
 
 \item{weights}{[\code{numeric}]\cr
 Optional, non-negative case weight vector to be used during fitting.
@@ -52,24 +62,6 @@ Observations with the same blocking level \dQuote{belong together}.
 Specifically, they are either put all in the training or the test set
 during a resampling iteration.
 Default is \code{NULL} which means no blocking.}
-
-\item{positive}{[\code{character(1)}]\cr
-Positive class for binary classification (otherwise ignored and set to NA).
-Default is the first factor level of the target attribute.}
-
-\item{fixup.data}{[\code{character(1)}]\cr
-Should some basic cleaning up of data be performed?
-Currently this means removing empty factor levels for the columns.
-Possible coices are:
-\dQuote{no} = Don't do it.
-\dQuote{warn} = Do it but warn about it.
-\dQuote{quiet} = Do it but keep silent.
-Default is \dQuote{warn}.}
-
-\item{check.data}{[\code{logical(1)}]\cr
-Should sanity of data be checked initially at task creation?
-You should have good reasons to turn this off (one might be speed).
-Default is \code{TRUE}}
 
 \item{costs}{[\code{data.frame}]\cr
 A numeric matrix or data frame containing the costs of misclassification.
@@ -92,11 +84,7 @@ See \code{\link[survival]{Surv}} for details.}
 \description{
 The task encapsulates the data and specifies - through its subclasses -
 the type of the task.
-It also contains a description object detailing further aspects of the data.
 
-Useful operators are: \code{\link{getTaskFormula}}, \code{\link{getTaskFormulaAsString}},
-\code{\link{getTaskFeatureNames}}, \code{\link{getTaskData}}, \code{\link{getTaskTargets}},
-\code{\link{subsetTask}}.
 
 Object members:
 \describe{
@@ -130,5 +118,11 @@ Other costsens: \code{\link{CostSensClassifModel}},
   \code{\link{CostSensWeightedPairsModel}},
   \code{\link{CostSensWeightedPairsWrapper}},
   \code{\link{makeCostSensWeightedPairsWrapper}}
+
+Other Task: \code{\link{copyTask}};
+  \code{\link{getTaskFeatureNames}};
+  \code{\link{getTaskFeatures}};
+  \code{\link{getTaskTargetNames}};
+  \code{\link{getTaskTarget}}
 }
 

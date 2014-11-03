@@ -17,10 +17,7 @@ If you pass a string the learner will be created via \code{\link{makeLearner}}.}
 Get a description of all possible parameter settings for a learner.
 }
 \seealso{
-Other learner: \code{\link{LearnerProperties}},
-  \code{\link{addProperties}}, \code{\link{hasProperties}},
-  \code{\link{removeProperties}},
-  \code{\link{setProperties}}; \code{\link{Learner}},
+Other learner: \code{\link{Learner}},
   \code{\link{makeLearner}}; \code{\link{getHyperPars}};
   \code{\link{removeHyperPars}};
   \code{\link{setHyperPars}}; \code{\link{setId}};

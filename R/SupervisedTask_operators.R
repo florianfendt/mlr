@@ -1,10 +1,10 @@
 #' @export
-getFeatures.SupervisedTask = function(task) {
-  task$data[, getFeatureNames(task), drop = FALSE]
+getTaskFeatures.SupervisedTask = function(task) {
+  task$data[, getTaskFeatureNames(task), drop = FALSE]
 }
 
 #' @export
-getTarget.SupervisedTask = function(task, recode = "no", drop = TRUE) {
+getTaskTarget.SupervisedTask = function(task, recode = "no", drop = TRUE) {
   assertString(recode)
   if (recode != "no")
     stopf("Recode option '%s' not supported by task '%s", recode, task$id)
@@ -12,12 +12,12 @@ getTarget.SupervisedTask = function(task, recode = "no", drop = TRUE) {
 }
 
 #' @export
-getTargetNames.SupervisedTask = function(task) {
+getTaskTargetNames.SupervisedTask = function(task) {
   task$target
 }
 
 #' @export
-getFeatureNames.SupervisedTask = function(task) {
+getTaskFeatureNames.SupervisedTask = function(task) {
   setdiff(names(task$data), task$target)
 }
 
@@ -29,5 +29,12 @@ getTaskNFeats.SupervisedTask = function(task) {
 #' @export
 getTaskDesc.SupervisedTask = function(task) {
   td = NextMethod("getTaskDesc")
-  insert(td, list(target = task$target))
+  td = insert(td, list(target = task$target))
+  addClasses(td, "SupervisedTaskDesc")
+}
+
+
+#' @export
+getTaskFormulaAsString.SupervisedTask = function(task, target = getTaskTargetNames(task)) {
+  sprintf("%s ~.", target)
 }

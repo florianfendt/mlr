@@ -6,8 +6,8 @@
 #' @return [\code{data.frame} | \code{vector}] of target column(s).
 #' @family Task
 #' @export
-getTarget = function(task, drop = TRUE) {
-  UseMethod("getTarget")
+getTaskTarget = function(task, drop = TRUE) {
+  UseMethod("getTaskTarget")
 }
 
 #' Get feature column(s) of a task.
@@ -17,8 +17,8 @@ getTarget = function(task, drop = TRUE) {
 #' @return [\code{data.frame}] of features.
 #' @family Task
 #' @export
-getFeatures = function(task) {
-  UseMethod("getFeatures")
+getTaskFeatures = function(task) {
+  UseMethod("getTaskFeatures")
 }
 
 #' Get names of target column(s) of a task.
@@ -27,8 +27,8 @@ getFeatures = function(task) {
 #' @return [\code{character}] of target name(s).
 #' @family Task
 #' @export
-getTargetNames = function(task) {
-  UseMethod("getTargetNames")
+getTaskTargetNames = function(task) {
+  UseMethod("getTaskTargetNames")
 }
 
 #' Get names of feature column(s) of a task.
@@ -37,16 +37,16 @@ getTargetNames = function(task) {
 #' @return [\code{character}] of target name(s).
 #' @family Task
 #' @export
-getFeatureNames = function(task) {
-  UseMethod("getFeatureNames")
+getTaskFeatureNames = function(task) {
+  UseMethod("getTaskFeatureNames")
 }
 
 #' Get variable types of features.
 #' @template arg_task
 #' @return [\code{factor}] with levels \dQuote{numeric}, \dQuote{factor} and \dQuote{ordered},
 #'  same length as feature columns.
-getFeatureTypes = function(task) {
-  UseMethod("getFeatureTypes")
+getTaskFeatureTypes = function(task) {
+  UseMethod("getTaskFeatureTypes")
 }
 
 #' Get number of features in task.
@@ -74,14 +74,13 @@ getTaskNFeats = function(task) {
 #' @return [\code{formula}].
 #' @family task
 #' @export
-getTaskFormula = function(task, target = getTargetNames(task), env = NULL) {
-  assertCharacter(target, any.missing = FALSE)
-  UseMethod("getTaskFormula")
+getTaskFormula = function(task, target = getTaskTargetNames(task), env = NULL) {
+  as.formula(getTaskFormulaAsString(task, target), env = env)
 }
 
 #' @export
 #' @rdname getTaskFormula
-getTaskFormulaAsString = function(task, target = getTargetNames(task)) {
+getTaskFormulaAsString = function(task, target = getTaskTargetNames(task)) {
   assertCharacter(target, any.missing = FALSE)
   UseMethod("getTaskFormulaAsString")
 }
@@ -136,9 +135,9 @@ getTaskDesc = function(task) {
 
 #' @title Recode target column to a specific format.
 #' @template arg_task
-#' @template subset [\code{integer} | \code{logical}]\cr
+#' @param subset [\code{integer} | \code{logical}]\cr
 #'  Vector to optionally subset the target.
-#' @template type [\code{character(1)}]\cr
+#' @param type [\code{character(1)}]\cr
 #'  Options are \dQuote{01} and \dQuote{-1+1} form classification tasks and
 #'  \dQuote{lcens}, \dQuote{rcens} and \dQuote{icens} for survival tasks.
 #' @return [data.frame].
@@ -155,4 +154,10 @@ recodeTarget = function(task, subset, type = "no") {
 #' @export
 getTaskType = function(task) {
   UseMethod("getTaskType")
+}
+
+# Internal function to extract factors
+getTaskFactorLevels = function(task) {
+  ft = getTaskFeatureTypes(task)
+  lapply(task[, ft %in% c("factor", "ordered")], levels)
 }

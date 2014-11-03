@@ -10,22 +10,32 @@ makeClassifTask = function(id = deparse(substitute(data)), data, target,
   task[[target]] = as.factor(data[[target]])
   assertFactor(task[[target]], empty.levels.ok = FALSE, .var.name = target)
   levs = levels(task[[target]])
-  if (!is.na(positive)) {
+  if (is.na(positive)) {
+    if (length(levs) == 2L) {
+      positive = levs[1L]
+      negative = levs[2L]
+    } else {
+      negative = NA
+    }
+  } else {
     assertChoice(positive, choices = levs)
     if (length(levs) > 2L)
       stop("Cannot set a positive class for a multiclass problem!")
+    negative = levs[levs != positive]
   }
 
-  task$type = "clasif"
+  task$type = "classif"
   task$class.levels = levs
   task$positive = positive
+  task$negative = negative
   addClasses(task, "ClassifTask")
 }
 
 #' @export
 getTaskDesc.ClassifTask = function(task) {
   td = NextMethod("getTaskDesc")
-  insert(td, list(class.levels = task$class.levels, positive = task$positive))
+  td = insert(td, list(class.levels = task$class.levels, positive = task$positive, negative = task$negative))
+  addClasses(td, "ClassifTaskDesc")
 }
 
 #' @export

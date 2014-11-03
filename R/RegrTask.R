@@ -12,6 +12,12 @@ makeRegrTask = function(id = deparse(substitute(data)), data, target, weights = 
 }
 
 #' @export
+getTaskDesc.RegrTask = function(task) {
+  td = NextMethod("getTaskDesc")
+  addClasses(td, "RegrTaskDesc")
+}
+
+#' @export
 print.RegrTask = function(x, ...) {
   catf("RegrTask %s", x$id)
   catf("Target: %s", collapse(x$target))

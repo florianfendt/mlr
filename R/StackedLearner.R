@@ -283,7 +283,7 @@ stackNoCV = function(learner, task) {
   }
 
   # now fit the super learner for predicted_probs --> target
-  tn = getTargetNames(task)
+  tn = egtTaskTargetNames(task)
   probs[[tn]] = getTaskTargets(task)
   if (use.feat) {
     # add data with normal features
@@ -325,7 +325,7 @@ stackCV = function(learner, task) {
   }
 
   # add true target column IN CORRECT ORDER
-  tn = getTargetNames(task)
+  tn = egtTaskTargetNames(task)
   test.inds = unlist(rin$test.inds)
 
   pred.train = as.list(probs[order(test.inds), , drop = FALSE])

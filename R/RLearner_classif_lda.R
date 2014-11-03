@@ -18,7 +18,7 @@ makeRLearner.classif.lda = function() {
 #' @export
 trainLearner.classif.lda = function(.learner, .task, .subset, .weights = NULL,  ...) {
   f = getTaskFormula(.task)
-  MASS::lda(f, data = getTaskData(.task, .subset), ...)
+  MASS::lda(f, data = .task[.subset, ], ...)
 }
 
 #' @export
@@ -29,4 +29,3 @@ predictLearner.classif.lda = function(.learner, .model, .newdata, ...) {
   else
     return(p$posterior)
 }
-

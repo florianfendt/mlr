@@ -29,7 +29,10 @@ Other costsens: \code{\link{ClassifTask}},
   \code{\link{Task}}, \code{\link{makeClassifTask}},
   \code{\link{makeClusterTask}},
   \code{\link{makeCostSensTask}},
-  \code{\link{makeRegrTask}}, \code{\link{makeSurvTask}};
+  \code{\link{makeRegrTask}},
+  \code{\link{makeSupervisedTask}},
+  \code{\link{makeSurvTask}}, \code{\link{makeTask}},
+  \code{\link{makeUnsupervisedTask}};
   \code{\link{CostSensClassifModel}},
   \code{\link{CostSensClassifWrapper}},
   \code{\link{makeCostSensClassifWrapper}};

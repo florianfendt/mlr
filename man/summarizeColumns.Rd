@@ -35,8 +35,7 @@ Characters and logicals will be treated as factors.
 summarizeColumns(iris)
 }
 \seealso{
-Other eda_and_preprocess: \code{\link{capLargeValues}};
-  \code{\link{createDummyFeatures}};
+Other eda_and_preprocess: \code{\link{createDummyFeatures}};
   \code{\link{dropFeatures}};
   \code{\link{mergeSmallFactorLevels}};
   \code{\link{normalizeFeatures}};

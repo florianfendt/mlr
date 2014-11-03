@@ -35,7 +35,8 @@ makeCostSensTask = function(id = deparse(substitute(data)), data, costs, blockin
 #' @export
 getTaskDesc.CostSensTask = function(task) {
   td = NextMethod("getTaskDesc")
-  insert(td, list(class.levels = task$class.levels))
+  td = insert(td, list(class.levels = task$class.levels))
+  addClasses(td, "CostSensTaskDesc")
 }
 
 #' @export

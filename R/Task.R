@@ -72,7 +72,7 @@ makeTask = function(id = as.character(deparse(substitute(data))), data, weights 
 print.Task = function(x, ...) {
   catf("Observations: %i", nrow(x$data))
   catf("Features:")
-  catf(collapse(printToChar(table(getFeatureTypes(x)), collapse = NULL)[-1L], "\n"))
+  catf(collapse(printToChar(table(getTaskFeatureTypes(x)), collapse = NULL)[-1L], "\n"))
   catf("Missings: %s", x$has.missings)
   catf("Has weights: %s", !is.null(x$weights))
   catf("Has blocking: %s", !is.null(x$has.blocking))

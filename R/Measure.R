@@ -112,12 +112,13 @@ makeMeasure = function(id, minimize, properties = character(0L), allowed.pred.ty
 }
 
 default.measures = function(x) {
-  type = if (inherits(x, "TaskDesc"))
-    x$type
-  else if (inherits(x, "Task"))
-    x$task.desc$type
-  else if (inherits(x, "Learner"))
-    x$type
+  # type = if (inherits(x, "TaskDesc"))
+  #   x$type
+  # else if (inherits(x, "Task"))
+  #   x$task.desc$type
+  # else if (inherits(x, "Learner"))
+  #   x$type
+  type = getTaskDesc(x)$type
   switch(type,
     classif = list(mmce),
     regr = list(mse),

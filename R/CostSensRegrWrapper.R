@@ -35,8 +35,7 @@ trainLearner.CostSensRegrWrapper = function(.learner, .task, .subset, ...) {
     cl = classes[i]
     y = costs[, cl]
     data = cbind(feats, ..y.. = y)
-    task = makeRegrTask(id = cl, data = data, target = "..y..",
-      check.data = FALSE, fixup.data = "quiet")
+    task = makeRegrTask(id = cl, data = data, target = "..y..")
     models[[i]] = train(.learner$next.learner, task)
   }
   makeChainModel(next.model = models, cl = "CostSensRegrModel")

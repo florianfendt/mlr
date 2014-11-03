@@ -201,4 +201,3 @@ mergeResampleResult = function(task, iter.results, measures, rin, models, extrac
     extract = if(is.function(extract)) extractSubList(iter.results, "extract", simplify = FALSE) else NULL
   )
 }
-

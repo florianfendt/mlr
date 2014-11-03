@@ -5,7 +5,7 @@ checkLearnerBeforeTrain = function(task, learner, weights) {
     clipString(collapse(colnames(.data)[has.it], ", "), 50L)
   }
 
-  td = task$task.desc
+  td = getTaskDesc(task)
 
   if (td$type != learner$type) {
     stopf("Task '%s' is '%s', but learner '%s' is for '%s'!", td$id, td$type, learner$id, learner$type)
@@ -16,17 +16,17 @@ checkLearnerBeforeTrain = function(task, learner, weights) {
     stopf("Task '%s' has missing values in '%s', but learner '%s' does not support that!", td$id, wrong.cols, learner$id)
   }
 
-  if (td$n.feat["numerics"] > 0L && !hasProperties(learner, "numerics")) {
+  if ("numeric" %in% td$feature.types && !hasProperties(learner, "numerics")) {
     wrong.cols = getColNames(task, is.numeric)
     stopf("Task '%s' has numeric inputs in '%s', but learner '%s' does not support that!", td$id, wrong.cols, learner$id)
   }
 
-  if (td$n.feat["factors"] > 0L && !hasProperties(learner, "factors")) {
+  if ("factors" %in% td$feature.types && !hasProperties(learner, "factors")) {
     wrong.cols = getColNames(task, is.factor)
     stopf("Task '%s' has factor inputs in '%s', but learner '%s' does not support that!", td$id, wrong.cols, learner$id)
   }
 
-  if (td$n.feat["ordered"] > 0L && !hasProperties(learner, "ordered")) {
+  if ("ordered" %in% td$feature.types && !hasProperties(learner, "ordered")) {
     wrong.cols = getColNames(task, is.factor)
     stopf("Task '%s' has ordered factor inputs in '%s', but learner '%s' does not support that!", td$id, wrong.cols, learner$id)
   }

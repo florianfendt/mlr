@@ -43,7 +43,7 @@ train = function(learner, task, subset, weights = NULL) {
   requireLearnerPackages(learner)
 
 
-  tn = getTargetNames(task)
+  tn = getTaskTargetNames(task)
 
   # make pars list for train call
   pars = list(.learner = learner, .task = task, .subset = subset)
@@ -62,9 +62,9 @@ train = function(learner, task, subset, weights = NULL) {
   pars = c(pars, getHyperPars(learner, "train"))
 
   vars = getTaskFeatureNames(task)
-  # no vars? then use no vars model
 
   if (length(vars) == 0L) {
+    # no vars? then use no vars model
     learner.model = makeNoFeaturesModel(targets = getTaskTarget(task)[subset], task.desc = getTaskDesc(task))
     time.train = 0
   } else {

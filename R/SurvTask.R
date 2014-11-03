@@ -54,7 +54,8 @@ makeSurvTask = function(id = deparse(substitute(data)), data, target, censoring 
 
 getTaskDesc.SurvTask = function(task) {
   td = NextMethod("getTaskDesc")
-  insert(td, censoring = task$censoring)
+  td = insert(td, list(censoring = task$censoring))
+  addClasses(td, "SurvTaskDesc")
 }
 
 #' @export
@@ -69,7 +70,7 @@ print.SurvTask = function(x, ...) {
 recodeTarget.SurvTask = function(task, subset, recode = "no") {
   assertChoice(recode, c("lcens", "rcens", "icens"))
 
-  y = getTarget(task)[subset,, drop = FALSE]
+  y = getTaskTarget(task)[subset,, drop = FALSE]
   from = task$censoring
   lookup = setNames(c("left", "right", "interval2"), c("lcens", "rcens", "icens"))
 

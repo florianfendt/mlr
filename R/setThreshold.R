@@ -34,7 +34,7 @@
 setThreshold = function(pred, threshold) {
   assertClass(pred, classes = "Prediction")
   assertNumeric(threshold, any.missing = FALSE)
-  td = pred$task.desc
+  td = getTaskDesc(pred)
   if (td$type != "classif")
     stop("Threshold can only be set for classification predictions!")
   if (pred$predict.type != "prob")

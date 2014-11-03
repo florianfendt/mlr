@@ -19,7 +19,7 @@ makeRLearner.classif.kknn = function() {
 
 #' @export
 trainLearner.classif.kknn = function(.learner, .task, .subset, .weights = NULL,  ...) {
-  list(td = getTaskDesc(.task), data = getTaskData(.task, .subset), parset = list(...))
+  list(td = getTaskDesc(.task), data = .task[.subset, ], parset = list(...))
 }
 
 #' @export
@@ -34,4 +34,3 @@ predictLearner.classif.kknn = function(.learner, .model, .newdata, ...) {
   else
     return(m$prob)
 }
-

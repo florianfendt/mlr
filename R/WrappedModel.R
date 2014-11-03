@@ -79,3 +79,8 @@ print.WrappedModel = function(x, ...) {
   if (isFailureModel(x))
     catf("Training failed: %s", getFailureModelMsg(x))
 }
+
+#' @export
+getTaskDesc.WrappedModel = function(x) {
+  x$task.desc
+}

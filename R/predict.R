@@ -44,10 +44,9 @@
 predict.WrappedModel = function(object, task, newdata, subset, ...) {
   if (!xor(missing(task), missing(newdata)))
     stop("Pass either a task object or a newdata data.frame to predict, but not both!")
-  assertClass(object, classes = "WrappedModel")
   model = object
   learner = model$learner
-  td = model$task.desc
+  td = getTaskDesc(model)
 
   # FIXME: cleanup if cases
   if (missing(newdata)) {
@@ -63,7 +62,7 @@ predict.WrappedModel = function(object, task, newdata, subset, ...) {
     subset = asInteger(subset, min.len = 1L, any.missing = FALSE, lower = 1L, upper = size)
   }
   if (missing(newdata)) {
-    newdata = getTaskData(task, subset)
+    newdata = task[subset, ]
   } else {
     newdata = newdata[subset,, drop = FALSE]
   }
@@ -119,6 +118,6 @@ predict.WrappedModel = function(object, task, newdata, subset, ...) {
     ids = NULL
   else
     ids = subset
-  makePrediction(task.desc = td, row.names = rownames(newdata), id = ids, truth = truth,
+  makePrediction(td, row.names = rownames(newdata), id = ids, truth = truth,
     predict.type = learner$predict.type, y = p, time = time.predict)
 }

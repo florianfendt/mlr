@@ -43,14 +43,14 @@ test_that("predict", {
   cp5d = setThreshold(cp5b, 1)
   cp5e = predict(cm5, task = binaryclass.task, subset = 1)
   expect_equal(cp5a$data$response, cp5b$data$response)
-  f1 = factor(rep(binaryclass.task$task.desc$positive, length(binaryclass.test.inds)),
-    levels = binaryclass.task$task.desc$class.levels)
+  td = getTaskDesc(binaryclass.task)
+  f1 = factor(rep(td$positive, length(binaryclass.test.inds)),
+    levels = td$class.levels)
   expect_equal(cp5c$data$response, f1)
-  f2 = factor(rep(binaryclass.task$task.desc$negative, length(binaryclass.test.inds)),
-    levels = binaryclass.task$task.desc$class.levels)
+  f2 = factor(rep(td$negative, length(binaryclass.test.inds)),
+    levels = td$class.levels)
   expect_equal(cp5d$data$response, f2)
   expect_true(setequal(levels(cp5e$data$response), c("M", "R")))
-
 })
 
 
@@ -105,5 +105,3 @@ test_that("setThreshold does not produce NAs for extreme thresholds", {
   p2 = setThreshold(p1, 0)
   expect_true(!any(is.na(p2$data$response)))
 })
-
-

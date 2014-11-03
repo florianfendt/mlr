@@ -282,8 +282,7 @@ imputeLearner = function(learner, features = NULL) {
         if (col %nin% features)
           features = c(col, features)
       }
-      task = constructor("impute", data = subset(data, select = features), target = col,
-        check.data = FALSE, fixup.data = "quiet")
+      task = constructor("impute", data = subset(data, select = features), target = col)
       list(model = train(learner, subsetTask(task, features = features)), features = features)
     },
 

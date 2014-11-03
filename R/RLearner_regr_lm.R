@@ -4,8 +4,8 @@ makeRLearner.regr.lm = function() {
     cl = "regr.lm",
     package = "stats",
     par.set = makeParamSet(
-  			 makeDiscreteLearnerParam(id = "method", default = "moment", values = c("moment", "mle", "mve", "t")),
-  			 makeNumericLearnerParam(id = "nu", lower = 2, requires = expression(method=="t")),
+      makeDiscreteLearnerParam(id = "method", default = "moment", values = c("moment", "mle", "mve", "t")),
+      makeNumericLearnerParam(id = "nu", lower = 2, requires = expression(method=="t")),
       makeNumericLearnerParam(id = "tol", default = 1.0e-4, lower = 0)
     ),
     properties = c("numerics", "factors", "se", "weights"),
@@ -17,7 +17,7 @@ makeRLearner.regr.lm = function() {
 
 #' @export
 trainLearner.regr.lm = function(.learner, .task, .subset, .weights = NULL,  ...) {
-  d = getTaskData(.task, .subset)
+  d = .task[.subset, ]
   if (is.null(.weights)) {
     f = getTaskFormula(.task)
     stats::lm(f, data = d, ...)

@@ -51,7 +51,7 @@ makeMulticlassWrapper = function(learner, mcw.method = "onevsrest") {
 #' @export
 trainLearner.MulticlassWrapper = function(.learner, .task, .subset, .weights = NULL, mcw.method, ...) {
   .task = .task[.subset,, task = TRUE]
-  tn = .task$task.desc$target
+  tn = getTaskTargetNames(.task)
   d = as.data.frame(.task)
   y = getTaskTarget(.task)
   cm = buildCMatrix(mcw.method, .task)
@@ -132,22 +132,23 @@ multi.to.binary = function(target, codematrix) {
 }
 
 cm.onevsrest = function(task) {
-  n = length(task$task.desc$class.levels)
+  levs = getTaskClassLevels(task)
+  n = length(levs)
   cm = matrix(-1, n, n)
   diag(cm) = 1
-  rownames(cm) = task$task.desc$class.levels
+  rownames(cm) = levs
   return(cm)
 }
 
 cm.onevsone = function(task) {
-  n = length(task$task.desc$class.levels)
+  levs = getTaskClassLevels(task)
+  n = length(levs)
   cm = matrix(0, n, choose(n, 2))
   combs = combn(n, 2)
   for (i in seq_col(combs)) {
     j = combs[, i]
     cm[j, i] = c(1, -1)
   }
-  rownames(cm) = task$task.desc$class.levels
+  rownames(cm) = levs
   return(cm)
 }
-

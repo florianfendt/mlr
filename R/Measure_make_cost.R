@@ -29,7 +29,7 @@ makeCostMeasure = function(id = "costs", minimize = TRUE, costs, task, combine =
   assertFunction(combine)
 
   #check costs
-  levs = task$task.desc$class.levels
+  levs = getTaskClassLevels(task)
   if (any(dim(costs))) {
     if (any(dim(costs) != length(levs)))
       stop("Dimensions of costs have to be the same as number of class levels!")

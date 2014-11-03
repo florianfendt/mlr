@@ -10,7 +10,7 @@ asROCRPrediction = function(pred) {
 
 #' @export
 asROCRPrediction.Prediction = function(pred) {
-  if(length(pred$task.desc$class.levels) != 2L) {
+  if(!isBinaryClassifTask(pred)) {
     stop("More than 2 classes!")
   }
   p = getProbabilities(pred)
@@ -19,9 +19,8 @@ asROCRPrediction.Prediction = function(pred) {
 
 #' @export
 asROCRPrediction.ResamplePrediction = function(pred) {
-  if(length(pred$task.desc$class.levels) != 2L) {
+  if(!isBinaryClassifTask(pred))
     stop("More than 2 classes!")
-  }
   prob = getProbabilities(pred)
   iter = pred$data$iter
   prob = split(prob, iter)

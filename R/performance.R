@@ -69,7 +69,7 @@ doPerformaceIteration = function(measure, pred = NULL, task = NULL, model = NULL
       stopf("You need to pass features for measure %s!", m$id)
     else if (is.null(feats))
       # FIXME: getTaskFeatures?
-      feats = task$data[pred$data$id,, drop = FALSE]
+      feats = getTaskFeatures(task, pred$data$id)
     else
       assertClass(feats, "data.frame")
   }

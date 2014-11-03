@@ -20,7 +20,7 @@ trainLearner.classif.logreg = function(.learner, .task, .subset, .weights = NULL
 #' @export
 predictLearner.classif.logreg = function(.learner, .model, .newdata, ...) {
   x = predict(.model$learner.model, newdata = .newdata, type = "response", ...)
-  levs = .model$task.desc$class.levels
+  levs = getTaskClassLevels(.model)
   if (.learner$predict.type == "prob") {
     # FIXME: this should be a helper function
     y = matrix(0, ncol = 2L, nrow = nrow(.newdata))
@@ -29,7 +29,6 @@ predictLearner.classif.logreg = function(.learner, .model, .newdata, ...) {
     y[, 2L] = x
     return(y)
   } else {
-    levs = .model$task.desc$class.levels
     p = as.factor(ifelse(x > 0.5, levs[2L], levs[1L]))
     unname(p)
   }

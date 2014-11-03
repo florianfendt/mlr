@@ -77,7 +77,7 @@ makeResampleInstance = function(desc, task, size, ...) {
     y = getTaskTarget(task)
     grp = switch(getTaskType(task),
       "classif" = {
-        lapply(task$class.levels, function(x) which(x == y))
+        lapply(getTaskClassLevels(task), function(x) which(x == y))
       },
       "surv" = {
         lapply(0:1, function(x) which(x == y[, 2L]))

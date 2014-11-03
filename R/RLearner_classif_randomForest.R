@@ -26,7 +26,7 @@ makeRLearner.classif.randomForest = function() {
 #' @export
 trainLearner.classif.randomForest = function(.learner, .task, .subset, .weights = NULL, classwt = NULL, cutoff, ...) {
   f = getTaskFormula(.task)
-  levs = .task$class.levels
+  levs = getTaskClassLevels(.task)
   n = length(levs)
   if (missing(cutoff))
     cutoff = rep(1/n, n)

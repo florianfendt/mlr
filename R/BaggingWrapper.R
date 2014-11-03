@@ -128,7 +128,7 @@ predictLearner.BaggingWrapper = function(.learner, .model, .newdata, ...) {
       rowMeans(p)
   } else {
     if (.learner$type == 'classif') {
-      levs = .model$task.desc$class.levels
+      levs = getTaskClassLevels(.model)
       p = apply(p, 1L, function(x) {
         x = factor(x, levels = levs) # we need all level for the table and we need them in consitent order!
         as.numeric(prop.table(table(x)))

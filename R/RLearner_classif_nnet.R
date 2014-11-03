@@ -46,7 +46,7 @@ predictLearner.classif.nnet = function(.learner, .model, .newdata, ...) {
   if (type == "class")
     return(as.factor(p))
   else {
-    if (length(.model$task.desc$class.levels) == 2L) {
+    if (isBinaryClassifTask(.model)) {
       y = cbind(1-p, p)
       colnames(y) = .model$learner.model$lev
       return(y)

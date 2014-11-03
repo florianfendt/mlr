@@ -171,8 +171,8 @@ predictLearner.StackedLearner = function(.learner, .model, .newdata, ...) {
   bms.pt = unique(extractSubList(.model$learner$base.learners, "predict.type"))
 
   # get task information (classif)
-  levs = .model$task.desc$class.levels
-  td = .model$task.desc
+  td = getTaskDesc(.model)
+  levs = td$class.levels
   type = ifelse(td$type == "regr", "regr",
     ifelse(length(td$class.levels) == 2L, "classif", "multiclassif"))
 
@@ -212,7 +212,7 @@ predictLearner.StackedLearner = function(.learner, .model, .newdata, ...) {
   } else {
     probs = as.data.frame(probs)
     # feed probs into super model and we are done
-    feat = .newdata[, !colnames(.newdata)%in%.model$task.desc$target, drop = FALSE]
+    feat = .newdata[, colnames(.newdata) %nin% getTaskTargetNames(.model), drop = FALSE]
 
     if (use.feat) {
       predData = cbind(probs, feat)
@@ -222,7 +222,7 @@ predictLearner.StackedLearner = function(.learner, .model, .newdata, ...) {
 
     pred = predict(sm, newdata = predData)
     if (sm.pt == "prob") {
-      return(as.matrix(getProbabilities(pred, cl = .model$task.desc$class.levels)))
+      return(as.matrix(getProbabilities(pred, cl = getTaskClassLevels(.model))))
     } else {
       return(pred$data$response)
     }
@@ -260,7 +260,7 @@ averageBaseLearners = function(learner, task) {
 # stacking where we predict the training set in-sample, then super-learn on that
 stackNoCV = function(learner, task) {
   type = getTaskType(task)
-  if (type == "classif" && task$class.levels > 2L)
+  if (type == "classif" && getTaskClassLevels(task) > 2L)
     type = "multiclassif"
   bls = learner$base.learners
   use.feat = learner$use.feat
@@ -302,7 +302,7 @@ stackNoCV = function(learner, task) {
 # stacking where we crossval the training set with the base learners, then super-learn on that
 stackCV = function(learner, task) {
   type = getTaskType(task)
-  if (type == "classif" && task$class.levels > 2L)
+  if (type == "classif" && getTaskClassLevels.defaul(task) > 2L)
     type = "multiclassif"
   bls = learner$base.learners
   use.feat = learner$use.feat
@@ -356,8 +356,9 @@ getResponse = function(pred, full.matrix = TRUE) {
   if (pred$predict.type == "prob") {
     if (full.matrix) {
       # Return matrix of probabilities
-      predReturn = pred$data[, paste("prob", pred$task.desc$class.levels, sep = ".")]
-      colnames(predReturn) = pred$task.desc$class.levels
+      levs = getTaskClassLevels(pred)
+      predReturn = pred$data[, paste("prob", pred, sep = ".")]
+      colnames(predReturn) = levs
       return(predReturn)
     } else {
       # Return only vector of probabilities for binary classification

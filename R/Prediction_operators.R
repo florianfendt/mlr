@@ -27,14 +27,15 @@ as.data.frame.Prediction = function(x, row.names = NULL, optional = FALSE,...) {
 #' head(getProbabilities(pred, c("setosa", "virginica")))
 getProbabilities = function(pred, cl) {
   assertClass(pred, classes = "Prediction")
-  ttype = pred$task.desc$type
+  td = getTaskDesc(pred)
+  ttype = td$type
   if (ttype %nin% c("classif", "cluster"))
     stop("Prediction was not generated from a ClassifTask or ClusterTask!")
   if (missing(cl)) {
-    if (length(pred$task.desc$class.levels) == 2L)
-      cl = pred$task.desc$positive
+    if (isBinaryClassifTask(pred))
+      cl = td$positive
     else
-      cl = pred$task.desc$class.levels
+      cl = td$class.levels
   } else {
     assertCharacter(cl, any.missing = FALSE)
   }
@@ -54,13 +55,3 @@ getProbabilities = function(pred, cl) {
   }
   return(y)
 }
-
-#c.Prediction = function(...) {
-#	preds = list(...)
-#	id = Reduce(c, lapply(preds, function(x) x@id))
-#	response = Reduce(c, lapply(preds, function(x) x@response))
-#	target = Reduce(c, lapply(preds, function(x) x@target))
-#	weights = Reduce(c, lapply(preds, function(x) x@weights))
-#	prob = Reduce(rbind, lapply(preds, function(x) x@prob))
-#	return(new("Prediction", task.desc = preds[[1]]@desc, id = id, response = response, target = target, weights = weights, prob = prob));
-#}

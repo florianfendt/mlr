@@ -54,3 +54,19 @@ recodeTaskTarget.ClassifTask = function(task, subset, type = "no") {
     return(as.numeric(y == task$positive))
   return(as.numeric(2L * (y == task$positive) - 1L))
 }
+
+getTaskClassLevels = function(task) {
+  UseMethod("getTaskClassLevels")
+}
+
+getTaskClassLevels.default = function(task) {
+  getTaskDesc(task)$class.levels
+}
+
+getTaskClassLevels.ClassifTask = function(task) {
+  task$class.levels
+}
+
+isBinaryClassifTask = function(task) {
+  length(getTaskClassLevels(task)) == 2L
+}

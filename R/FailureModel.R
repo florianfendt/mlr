@@ -33,7 +33,7 @@ predictFailureModel = function(model, newdata) {
   ptype = lrn$predict.type
   n = nrow(newdata)
   if (type == "classif") {
-    levs = model$task.desc$class.levels
+    levs = getTaskClassLevels(model)
     res = if (ptype == "response")
       factor(rep(NA_character_, n), levels = levs)
     else
@@ -49,7 +49,7 @@ predictFailureModel = function(model, newdata) {
     else
       stop("Predict type 'prob' for survival not yet supported")
   } else if (type == "costsens") {
-    levs = model$task.desc$class.levels
+    levs = getTaskClassLevels(model)
     res = factor(rep(NA_character_, n), levels = levs)
   } else if (type == "cluster") {
     res = rep(NA_character_, n)

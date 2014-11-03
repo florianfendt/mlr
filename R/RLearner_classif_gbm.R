@@ -22,7 +22,8 @@ makeRLearner.classif.gbm = function() {
 #' @export
 trainLearner.classif.gbm = function(.learner, .task, .subset, .weights = NULL,  ...) {
   d = .task[.subset, ]
-  if(length(.task$class.levels) == 2L) {
+  levs = getTaskClassLevels(.task)
+  if(length(levs) == 2L) {
     tn = getTaskTargetNames(.task)
     d[[tn]] = recodeTarget(.task, .subset, recode = "01")
   }
@@ -39,8 +40,9 @@ trainLearner.classif.gbm = function(.learner, .task, .subset, .weights = NULL,  
 predictLearner.classif.gbm = function(.learner, .model, .newdata, ...) {
   m = .model$learner.model
   p = predict(m, newdata = .newdata, type = "response", n.trees = m$n.trees, single.tree = FALSE, ...)
-  if (length(.model$task.desc$class.levels) == 2) {
-    levs = c(.model$task.desc$negative, .model$task.desc$positive)
+  td = getTaskDesc(.model)
+  if (length(td$class.levels) == 2) {
+    levs = c(td$negative, td$positive)
     if (.learner$predict.type == "prob") {
       y = matrix(0, ncol = 2, nrow = nrow(.newdata))
       colnames(y) = levs

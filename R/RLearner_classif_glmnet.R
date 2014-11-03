@@ -49,7 +49,7 @@ trainLearner.classif.glmnet = function(.learner, .task, .subset, .weights = NULL
   if (!is.null(.weights))
     args$weights = .weights
 
-  args$family = ifelse(length(.task$class.levels) == 2L, "binomial", "multinomial")
+  args$family = ifelse(isBinaryClassifTask(.task), "binomial", "multinomial")
 
   saved.ctrl = glmnet::glmnet.control()
   is.ctrl.arg = names(args) %in% names(saved.ctrl)
@@ -68,14 +68,15 @@ predictLearner.classif.glmnet = function(.learner, .model, .newdata, ...) {
   .newdata = as.matrix(fixDataForLearner(.newdata, info))
   if(.learner$predict.type == "prob") {
     p = predict(.model$learner.model, newx = .newdata, type = "response",  ...)
-    if (length(.model$task.desc$class.levels) == 2) {
-      p = setColNames(cbind(1 - p, p), .model$task.desc$class.levels)
+    levs = getTaskClassLevels(.model)
+    if (length(levs) == 2) {
+      p = setColNames(cbind(1 - p, p), levs)
     } else {
       p = p[,,1]
     }
   } else {
     p = drop(predict(.model$learner.model, newx = .newdata, type = "class", ...))
-    p = factor(p, .model$task.desc$class.levels)
+    p = factor(p, levs)
   }
   p
 }

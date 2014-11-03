@@ -42,7 +42,7 @@ tuneThreshold = function(pred, measure, task, model, nsub = 20L, control = list(
     return(list(th = NA, pred = pred, th.seq = numeric(0), perf = numeric(0)))
   }
 
-  cls = pred$task.desc$class.levels
+  cls = getTaskClassLevels(pred)
   k = length(cls)
   fitn = function(x) {
     if (k > 2)

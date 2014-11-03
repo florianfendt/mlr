@@ -191,7 +191,7 @@ ber = makeMeasure(id = "ber", minimize = TRUE, best = 0, worst = 1,
   allowed.pred.types = c("response", "prob"),
   note = "Balanced error rate. Mean of misclassification error rates on all individual classes.",
   fun = function(task, model, pred, feats, extra.args) {
-    n = length(pred$task.desc$class.levels) + 1L
+    n = length(getTaskClassLevels(pred)) + 1L
     mean(getConfMatrix(pred, relative = TRUE)[-n, n])
   }
 )

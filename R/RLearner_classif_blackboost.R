@@ -45,7 +45,7 @@ predictLearner.classif.blackboost = function(.learner, .model, .newdata, ...) {
   p = predict(.model$learner.model, newdata = .newdata, type = type, ...)
   if (.learner$predict.type == "prob") {
     y = matrix(0, ncol = 2L, nrow = nrow(.newdata))
-    colnames(y) = .model$task.desc$class.levels
+    colnames(y) = getTaskClassLevels(.model)
     y[, 1L] = p
     y[, 2L] = 1-p
     return(y)

@@ -55,7 +55,7 @@ predictLearner.classif.cforest = function(.learner, .model, .newdata, ...) {
     p = predict(.model$learner.model, newdata = .newdata, type = "prob", ...)
     # FIXME: this will break for nrow(.newdata) == 1? do not use sapply!
     p = t(sapply(p, "["))
-    colnames(p) = .model$task.desc$class.levels
+    colnames(p) = getTaskClassLevels(.model)
   } else {
     p = predict(.model$learner.model, newdata = .newdata, ...)
   }

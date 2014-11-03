@@ -33,7 +33,7 @@ trainLearner.CostSensWeightedPairsWrapper = function(.learner, .task, .subset, .
   # note that no hyperpars can be in ..., they would refer to the wrapper
   .task = .task[.subset,, task = TRUE]
   costs = getTaskCosts(.task)
-  classes = getTaskDesc(.task)$class.levels
+  classes = getTaskClassLevels(.task)
   k = length(classes)
   feats = as.data.frame(.task)
   models = vector("list", length = k * (k - 1) / 2)
@@ -62,7 +62,7 @@ trainLearner.CostSensWeightedPairsWrapper = function(.learner, .task, .subset, .
 
 #' @export
 predictLearner.CostSensWeightedPairsWrapper = function(.learner, .model, .newdata, ...) {
-  classes = .model$task.desc$class.levels
+  classes = getTaskClassLevels(.model)
   models = getCostSensWeightedPairsModels(.model)
   preds = sapply(models, function(mod) {
     n = nrow(.newdata)

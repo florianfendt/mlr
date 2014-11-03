@@ -33,7 +33,7 @@ getConfMatrix = function(pred, relative = FALSE) {
     stop("Can only calculate confusion matrix for classification predictions, not: %s",
       pred$task.desc$type)
   resp = pred$data$response
-  cls = pred$task.desc$class.levels
+  cls = getTaskClassLevels(pred)
   n = length(cls)
   tab = table(pred$data$truth, resp)
   mt = tab * (matrix(1, ncol = n, nrow = n) - diag(, n, n))

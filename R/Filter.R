@@ -95,7 +95,7 @@ makeFilter(
   desc = "Minimum redundancy, maximum relevance filter",
   pkg  = "mRMRe",
   supported.tasks = c("classif", "regr", "surv"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     if (inherits(task, "SurvTask")) {
       data = cbind(..surv = recodeTaskTarget(task, type = "rcens"), getTaskFeatures(task))
@@ -124,7 +124,7 @@ makeFilter(
   desc = "CAR scores",
   pkg  = "care",
   supported.tasks = "regr",
-  supported.features = "numerics",
+  supported.features = "numeric",
   fun = function(task, nselect, ...) {
     y = care::carscore(Xtrain = getTaskFeatures(task), Ytrain = getTaskTarget(task), verbose = FALSE, ...)^2
     setNames(as.double(y), names(y))
@@ -136,7 +136,7 @@ makeFilter(
   desc = "Importance of random forests",
   pkg  = "randomForestSRC",
   supported.tasks = c("classif", "regr", "surv"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     im = randomForestSRC::rfsrc(getTaskFormula(task), data = as.data.frame(task), proximity = FALSE, forest = FALSE, ...)$importance
     if (inherits(task, "ClassifTask")) {
@@ -155,7 +155,7 @@ makeFilter(
   desc = "Minimal depth of random forest fitted in package 'randomForestSRC'",
   pkg  = "randomForestSRC",
   supported.tasks = c("classif", "regr", "surv"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     im = randomForestSRC::var.select(getTaskFormula(task), as.data.frame(task),
       method = "md", verbose = FALSE, ...)$md.obj$order
@@ -168,7 +168,7 @@ makeFilter(
   desc = "Pearson correlation between feature and target",
   pkg  = "FSelector",
   supported.tasks = "regr",
-  supported.features = "numerics",
+  supported.features = "numeric",
   fun = function(task, nselect, ...) {
     y = FSelector::linear.correlation(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
@@ -180,7 +180,7 @@ makeFilter(
   desc = "Spearman's correlation between feature and target",
   pkg  = "FSelector",
   supported.tasks = c("regr"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     y = FSelector::rank.correlation(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
@@ -192,7 +192,7 @@ makeFilter(
   desc = "Entropy-based information gain between feature and target",
   pkg  = "FSelector",
   supported.tasks = c("classif", "regr"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     y = FSelector::information.gain(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
@@ -204,7 +204,7 @@ makeFilter(
   desc = "Entropy-based gain ratio between feature and target",
   pkg  = "FSelector",
   supported.tasks = c("classif", "regr"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     y = FSelector::gain.ratio(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
@@ -216,7 +216,7 @@ makeFilter(
   desc = "Entropy-based symmetrical uncertainty between feature and target",
   pkg  = "FSelector",
   supported.tasks = c("classif", "regr"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     y = FSelector::symmetrical.uncertainty(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
@@ -228,7 +228,7 @@ makeFilter(
   desc = "Chi-squared statistic of independence between feature and target",
   pkg  = "FSelector",
   supported.tasks = c("classif", "regr"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     y = FSelector::chi.squared(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
@@ -240,7 +240,7 @@ makeFilter(
   desc = "RELIEF algorithm",
   pkg  = "FSelector",
   supported.tasks = c("classif", "regr"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     y = FSelector::relief(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
@@ -252,7 +252,7 @@ makeFilter(
   desc = "oneR assocation rule",
   pkg  = "FSelector",
   supported.tasks = c("classif", "regr"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     y = FSelector::oneR(getTaskFormula(task), data = as.data.frame(task))
     setNames(y[["attr_importance"]], getTaskFeatureNames(task))
@@ -264,7 +264,7 @@ makeFilter(
   desc = "Construct a simple performance filter using a mlr learner",
   pkg  = NA_character_,
   supported.tasks = c("classif", "regr", "surv"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, perf.learner, perf.measure, perf.resampling = NULL, ...) {
     perf.learner = checkLearner(perf.learner)
     perf.measure = checkMeasures(perf.measure, perf.learner)
@@ -292,7 +292,7 @@ makeFilter(
   desc = "ANOVA Test for binary and multiclass classification tasks",
   pkg = NA_character_,
   supported.tasks = c("classif"),
-  supported.features = c("numerics"),
+  supported.features = c("numeric"),
   fun = function(task, nselect, ...) {
     data = as.data.frame(task)
     sapply(getTaskFeatureNames(task), function(feat.name) {
@@ -308,7 +308,7 @@ makeFilter(
   desc = "Kurskal Test for binary and multiclass classification tasks",
   pkg = NA_character_,
   supported.tasks = c("classif"),
-  supported.features = c("numerics", "factors"),
+  supported.features = c("numeric", "factor"),
   fun = function(task, nselect, ...) {
     data = as.data.frame(task)
     sapply(getTaskFeatureNames(task), function(feat.name) {
@@ -324,7 +324,7 @@ makeFilter(
   desc = "A simple variance filter",
   pkg = NA_character_,
   supported.tasks = c("classif", "regr", "surv"),
-  supported.features = c("numerics"),
+  supported.features = c("numeric"),
   fun = function(task, nselect, na.rm = FALSE, ...) {
     data = as.data.frame(task)
     sapply(getTaskFeatureNames(task), function(feat.name) {

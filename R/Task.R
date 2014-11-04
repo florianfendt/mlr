@@ -59,7 +59,7 @@ makeTask = function(id = as.character(deparse(substitute(data))), data, weights 
   }
   if (!is.null(blocking)) {
     assertFactor(blocking, len = nrow(data), any.missing = FALSE)
-    if(length(task$blocking) != getTaskRows(task))
+    if(length(blocking) != nrow(data))
       stop("Blocking has to be of the same length as number of rows in data! Or pass none at all.")
     env$blocking = blocking
   }

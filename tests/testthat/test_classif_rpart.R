@@ -20,9 +20,9 @@ test_that("classif_rpart", {
     set.seed(getOption("mlr.debug.seed"))
     m = do.call(rpart, pars)
     p  = predict(m, newdata = multiclass.test, type = "class")
-	p2 = predict(m, newdata = multiclass.test, type = "prob")
-	old.predicts.list[[i]] = p
-	old.probs.list[[i]] = p2
+    p2 = predict(m, newdata = multiclass.test, type = "prob")
+    old.predicts.list[[i]] = p
+    old.probs.list[[i]] = p2
   }
 
   testSimpleParsets("classif.rpart", multiclass.df, multiclass.target, multiclass.train.inds, old.predicts.list, parset.list)
@@ -34,4 +34,3 @@ test_that("classif_rpart", {
   testCVParsets("classif.rpart", multiclass.df, multiclass.target, tune.train = tt, tune.predict = tp, parset.list = parset.list)
 
 })
-
